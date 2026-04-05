@@ -1,8 +1,8 @@
 CXX = g++
 CXXFLAGS =  -std=c++23
-TARGET = practica6_DAA
+TARGET = practice5_DAA
 
-SOURCES =  src/main.cc
+SOURCES =  src/main.cc src/ms_cflp_ci_solution.cc src/ms_cflp_ci_instance.cc src/ms_cflp_ci_instance_csi_loader.cc src/ms_cflp_ci_general_solver.cc src/greedy_ms_cflp_ci_solver.cc src/grasp_ms_cflp_ci_solver.cc src/grasp_algorythm.cc 
 
 OBJECTS = $(SOURCES:.cc=.o)
 
