@@ -44,16 +44,18 @@ Solution* GreedyMsCflpCiSolver::Solve(Instance* input) {
   }
   
   // Fase 2, Customer assignment.
-  std::vector<double> customer_demands = original_instance.GetCustomerDemands();
+  std::vector<double> customer_demands = original_instance.GetCustomerDemands();  // Its dynamic.
   for (size_t customer_id = 0; customer_id < original_instance.GetCustomerCount(); ++customer_id) {
     const std::vector<int>& facilities_by_current_cost = original_instance.GetFacilitiesSortedByCostForCustomer(customer_id);
     size_t factory_index = 0;
     while (customer_demands[customer_id] > 0 && factory_index < facilities_by_current_cost.size()) {
-      if (greedy_solution->CanAddFlow(customer_id, facilities_by_current_cost[factory_index], original_instance.GetCustomerDemand(customer_id))) {
-        const double amount_to_assign = std::min(
-            greedy_solution->GetResidualCapacity(facilities_by_current_cost[factory_index]),
-            customer_demands[customer_id]);
-        greedy_solution->AddFlow(customer_id, facilities_by_current_cost[factory_index], amount_to_assign);
+      const int facility = facilities_by_current_cost[factory_index];
+      const double amount_to_assign = std::min(
+          greedy_solution->GetResidualCapacity(facility),
+          customer_demands[customer_id]);
+          
+      if (greedy_solution->CanAddFlow(customer_id, facility, amount_to_assign)) {
+        greedy_solution->AddFlow(customer_id, facility, amount_to_assign);
         customer_demands[customer_id] -= amount_to_assign;
       }
       ++factory_index;
