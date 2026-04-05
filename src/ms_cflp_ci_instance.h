@@ -48,6 +48,7 @@ class MsCflpCiInstance : public Instance {
   const std::vector<double>& GetCustomerDemands() const { return customer_demands_;}
   double GetTotalDemand() const;
   double GetTotalCapacity() const;
+  double GetAverageAssignmentCostByFacility(int facility_id) const;
 
   bool IsValid() const;
   bool AreCustomersIncompatible(int customer_1, int customer_2) const;

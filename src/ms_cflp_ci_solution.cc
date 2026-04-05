@@ -437,8 +437,7 @@ bool MsCflpCiSolution::ShiftFlow(int customer_id, int source_facility, int targe
  * @param amount Amount of demand units to shift.
  * @return Delta value of the move.
  */
-double MsCflpCiSolution::EvaluateShiftDelta(int customer_id, int source_facility, int target_facility,
-    double amount) const {
+double MsCflpCiSolution::EvaluateShiftDelta(int customer_id, int source_facility, int target_facility, double amount) const {
   // This may be problematic.
   if (!CanShiftFlow(customer_id, source_facility, target_facility, amount)) {
     throw std::invalid_argument("Infeasible shift move.");

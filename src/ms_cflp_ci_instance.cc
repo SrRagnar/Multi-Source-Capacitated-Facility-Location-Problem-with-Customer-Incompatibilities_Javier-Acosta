@@ -438,3 +438,22 @@ bool MsCflpCiInstance::IsValidCustomerId(int customer_id) const {
 bool MsCflpCiInstance::IsValidFacilityId(int facility_id) const {
   return facility_id >= 0 && facility_id < facility_count_;
 }
+
+/**
+ * @brief Computes the average assignment cost of a facility.
+ *
+ * @param facility_id Facility identifier.
+ * @return Average assignment cost of the facility.
+ *
+ * @throw std::out_of_range If the facility identifier is not valid.
+ */
+double MsCflpCiInstance::GetAverageAssignmentCostByFacility(int facility_id) const {
+  if (!IsValidFacilityId(facility_id)) {
+    throw std::out_of_range("Invalid facility identifier.");
+  }
+  double total_cost = 0.0;
+  for (int i = 0; i < customer_count_; ++i) {
+    total_cost += assignment_costs_[i][facility_id];
+  }
+  return total_cost / customer_count_;
+}
