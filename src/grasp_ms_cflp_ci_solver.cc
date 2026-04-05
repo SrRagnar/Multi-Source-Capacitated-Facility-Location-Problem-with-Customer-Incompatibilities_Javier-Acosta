@@ -19,7 +19,6 @@
 #include "ms_cflp_ci_instance.h"
 
 void GraspMsCflpCiSolver::Preprocess(Instance* input) {
-  // Not implemented, because its not necessary for the current implementation.
   return;
 }
 
@@ -32,28 +31,42 @@ Solution* GraspMsCflpCiSolver::ConstructSolution(Instance* input) {
   const MsCflpCiInstance& original_instance = greedy_solution->GetInstance();
   
   // Fase 1, Facilities selection.
-  std::vector<int> facilities_by_score = GetSortedFacilitiesByScore(original_instance);  
-
   const double total_demand = original_instance.GetTotalDemand();
   double accumulated_capacity = 0.0;
-  const unsigned cardinality_parameter = 5;  // k best elements, defines the LRC size.
-  size_t facility_index = 0;
-  // Randomly select a facility from the best k facilities from the sorted list until the demand is covered.
-  while (accumulated_capacity < total_demand && !facilities_by_score.empty()) {
-    facility_index = std::rand() % std::min(cardinality_parameter, static_cast<unsigned>(facilities_by_score.size()));
-    const int facility = facilities_by_score[facility_index];
-    greedy_solution->OpenFacility(facility);
-    accumulated_capacity += original_instance.GetFacilityCapacity(facility);
-    facilities_by_score.erase(facilities_by_score.begin() + facility_index);
+  const unsigned cardinality_parameter = 5;
+  while (accumulated_capacity < total_demand) {
+    std::vector<int> facilities_by_score = GetSortedFacilitiesByScore(original_instance, *greedy_solution);
+    if (facilities_by_score.empty()) {
+      break;
+    }
+    unsigned current_rcl_size = std::min(
+        cardinality_parameter,
+        static_cast<unsigned>(facilities_by_score.size()));
+
+    unsigned facility_index = std::rand() % current_rcl_size;
+    int facility = facilities_by_score[facility_index];
+    if (!greedy_solution->IsFacilityOpen(facility)) {
+      greedy_solution->OpenFacility(facility);
+      accumulated_capacity += original_instance.GetFacilityCapacity(facility);
+    }
   }
   // Add a slack to treat possible incompatibilities.
   unsigned slack_parameter = FindSlackValue(original_instance);
-  while (!facilities_by_score.empty() && slack_parameter > 0) {
-    facility_index = std::rand() % std::min(slack_parameter, static_cast<unsigned>(facilities_by_score.size()));
-    const int facility = facilities_by_score[facility_index];
-    greedy_solution->OpenFacility(facility);
-    facilities_by_score.erase(facilities_by_score.begin() + facility_index);
-    --slack_parameter;
+  while (slack_parameter > 0) {
+    std::vector<int> facilities_by_score = GetSortedFacilitiesByScore(original_instance, *greedy_solution);
+    if (facilities_by_score.empty()) {
+      break;
+    }
+    unsigned current_rcl_size = std::min(
+        slack_parameter,
+        static_cast<unsigned>(facilities_by_score.size()));
+
+    unsigned facility_index = std::rand() % current_rcl_size;
+    int facility = facilities_by_score[facility_index];
+    if (!greedy_solution->IsFacilityOpen(facility)) {
+      greedy_solution->OpenFacility(facility);
+      --slack_parameter;
+    }
   }
   
   // Fase 2, Customer assignment.
@@ -79,15 +92,14 @@ Solution* GraspMsCflpCiSolver::ConstructSolution(Instance* input) {
 }
 
 void GraspMsCflpCiSolver::Postprocess(Solution* solution) {
-  // Implementation for postprocessing
+  // Not implemented yet
 }
 
 void GraspMsCflpCiSolver::UpdateBest(Solution* current, Solution*& best) {
-  // Implementation for updating best solution
+  // Not implemented yet
 }
 
 bool GraspMsCflpCiSolver::StopCriterion() const {
-  // Implementation for stop criterion, not implemented yet.
   return true;
 }
 
@@ -101,24 +113,39 @@ unsigned GraspMsCflpCiSolver::FindSlackValue(const MsCflpCiInstance& instance) c
   return std::min(slack, static_cast<unsigned>(instance.GetFacilityCount() * 0.2));  // Cap at 20% of total facilities
 }
 
-std::vector<int> GraspMsCflpCiSolver::GetSortedFacilitiesByScore(const MsCflpCiInstance& instance) const {
-  const double opening_cost_factor = 0.1;
-  const double average_assignment_cost_factor = 0.9;
-  std::vector<std::pair<int, double>> facilities_with_scores;
+std::vector<int> GraspMsCflpCiSolver::GetSortedFacilitiesByScore(const MsCflpCiInstance& instance, const MsCflpCiSolution& solution) const {
 
-  // Compute a score for each facility based on the factors stablished, a lower scores is better.
+  const double opening_cost_factor = 0.1;
+  const double average_assignment_cost_factor = 0.8;
+  const double incompatibility_penalty_factor = 0.1;
+
+  std::vector<std::pair<int, double>> facilities_with_scores;
+  // Penalty based on incompatibility density, to prefer facilities that may cause fewer issues.
+  const double incompatibility_density = static_cast<double>(instance.GetIncompatibilityPairs().size()) /
+                                         (instance.GetCustomerCount() + 1.0);
+
   for (int facility_id = 0; facility_id < instance.GetFacilityCount(); ++facility_id) {
+    // Don't consider already open facilities.
+    if (solution.IsFacilityOpen(facility_id)) {
+      continue;
+    }
     double score = opening_cost_factor * instance.GetFacilityOpeningCost(facility_id) +
-                   average_assignment_cost_factor * instance.GetAverageAssignmentCostByFacility(facility_id);
+        average_assignment_cost_factor * instance.GetAverageAssignmentCostByFacility(facility_id) +
+        incompatibility_penalty_factor * incompatibility_density;
+
     facilities_with_scores.emplace_back(facility_id, score);
   }
-  std::sort(facilities_with_scores.begin(), facilities_with_scores.end(),
-            [](const std::pair<int, double>& a, const std::pair<int, double>& b) {
-              return a.second < b.second;  // Ascending order by score
+  std::sort(facilities_with_scores.begin(),
+            facilities_with_scores.end(),
+            [](const std::pair<int, double>& a,
+               const std::pair<int, double>& b) {
+              return a.second < b.second;
             });
+
   std::vector<int> facilities_by_score;
-   for (const auto& pair : facilities_with_scores) {
-    facilities_by_score.push_back(pair.first);
+  for (size_t i = 0; i < facilities_with_scores.size(); ++i) {
+    facilities_by_score.push_back(facilities_with_scores[i].first);
   }
+
   return facilities_by_score;
 }
