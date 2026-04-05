@@ -32,7 +32,7 @@ Solution* GraspAlgorythm::Solve(Instance* input) {
   do {
     Solution* current_solution = ConstructSolution(input);
     if (current_solution == nullptr) {
-      throw std::runtime_error("ConstructSolution returned null.");
+      throw std::runtime_error("ConstructSolution returned null, not feasible solution could be found.");
     }
     Postprocess(current_solution);
     UpdateBest(current_solution, best_solution);

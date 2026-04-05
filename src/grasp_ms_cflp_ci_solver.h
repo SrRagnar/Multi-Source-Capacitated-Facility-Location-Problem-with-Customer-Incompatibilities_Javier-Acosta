@@ -32,6 +32,7 @@ class GraspMsCflpCiSolver : public GraspAlgorythm {
  private:
   unsigned FindSlackValue(const MsCflpCiInstance& instance) const;
   std::vector<int> GetSortedFacilitiesByScore(const MsCflpCiInstance& instance, const MsCflpCiSolution& solution) const;
+  std::vector<int> GetSortedFacilitiesByCostForCustomer(const MsCflpCiSolution& solution, int customer_id) const;
 
   MsCflpCiSolution* LocalSeachByShifting(MsCflpCiSolution* solution) const;
   MsCflpCiSolution* LocalSearchBySwapingClients(MsCflpCiSolution* solution) const;
