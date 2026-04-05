@@ -35,6 +35,12 @@ int main(int argc, char* argv[]) {
     MsCflpCiInstance* instance = loader.Load();
     MsCflpCiGeneralSolver solver(new GreedyMsCflpCiSolver());
     MsCflpCiSolution* solution = solver.SolveMsCflpCiInstance(instance);
+    if (solution->IsFeasible()) {
+      std::cout << "Solution is feasible." << std::endl;
+    } else {
+      std::cout << "Solution is not feasible." << std::endl;
+      return 1;
+    } 
     std::cout << "Total Cost: " << solution->GetTotalCost() << std::endl;
     delete solution;
     delete instance;
