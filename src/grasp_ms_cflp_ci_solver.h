@@ -22,6 +22,9 @@
  * @brief Class that implements the GRASP metaheuristic to solve the MS-CFLP-CI problem.
  */
 class GraspMsCflpCiSolver : public GraspAlgorythm {
+ public:
+  GraspMsCflpCiSolver(unsigned cardinality = 1) : lcr_cardinality_{cardinality} {}
+  ~GraspMsCflpCiSolver() override = default;
  protected:
   void Preprocess(Instance* input) override;
   Solution* ConstructSolution(Instance* input) override;
@@ -31,7 +34,8 @@ class GraspMsCflpCiSolver : public GraspAlgorythm {
  
  private:
   unsigned grasp_iterations_ = 0;
-  unsigned max_grasp_iterations_ = 10;
+  unsigned max_grasp_iterations_ = 5;
+  unsigned lcr_cardinality_ = 1;
 
   unsigned FindSlackValue(const MsCflpCiInstance& instance) const;
   std::vector<int> GetSortedFacilitiesByScore(const MsCflpCiInstance& instance, const MsCflpCiSolution& solution) const;

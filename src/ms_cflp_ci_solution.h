@@ -63,11 +63,11 @@ class MsCflpCiSolution : public Solution {
 
   double EvaluateShiftDelta(int customer_id, int source_facility, int target_facility, double amount) const;
   double EvaluateSwapDelta(int customer_a, int facility_a, int customer_b, int facility_b) const;
-  bool IsCustomerFullySatisfied(int customer_id, double tolerance = 1e-6) const;
-  bool IsFeasible(double tolerance = 1e-6) const;
+  bool IsCustomerFullySatisfied(int customer_id, double tolerance = 1e-8) const;
+  bool IsFeasible(double tolerance = 1e-8) const;
   // Used to check correct behavior of delta evaluations.
   double ComputeObjectiveFromScratch() const;
-  bool CheckObjectiveConsistency(double tolerance = 1e-6) const;
+  bool CheckObjectiveConsistency(double tolerance = 1e-8) const;
 
   int CountOpenFacilities() const;
   int CountIncompatibilityViolations() const;
@@ -102,4 +102,4 @@ class MsCflpCiSolution : public Solution {
   double total_cost_ = 0.0;
 };
 
-#endif 
+#endif

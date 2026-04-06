@@ -18,6 +18,29 @@
 #include <cmath>
 #include <stdexcept>
 
+namespace {
+  constexpr double kAmountTolerance = 1e-8;
+  constexpr double kFractionTolerance = 1e-8;
+  constexpr double kCostTolerance = 1e-8;
+
+  double ClampNearZero(double value, double tolerance = kAmountTolerance) {
+    if (std::fabs(value) <= tolerance) {
+      return 0.0;
+    }
+    return value;
+  }
+
+  double ClampFraction(double value, double tolerance = kFractionTolerance) {
+    if (std::fabs(value) <= tolerance) {
+      return 0.0;
+    }
+    if (std::fabs(value - 1.0) <= tolerance) {
+      return 1.0;
+    }
+    return value;
+  }
+}  
+
 /**
  * @brief Builds an empty solution for a given instance.
  *
@@ -286,13 +309,35 @@ bool MsCflpCiSolution::CanAssignCustomerToFacility(int customer_id, int facility
  * @return True if the flow can be added, false otherwise.
  */
 bool MsCflpCiSolution::CanAddFlow(int customer_id, int facility_id, double amount) const {
-  if (!CanAssignCustomerToFacility(customer_id, facility_id) ||
-      amount <= 0.0 || amount > residual_capacity_[facility_id] + 1e-9) {
+  if (!IsValidCustomerId(customer_id) || !IsValidFacilityId(facility_id)) {
     return false;
   }
-  double demand = instance_.GetCustomerDemand(customer_id);
-  if (GetAssignedAmount(customer_id, facility_id) + amount > demand + 1e-9 ||
-      GetCustomerAssignedFractionSum(customer_id) + amount / demand > 1.0 + 1e-9) {
+  if (!factory_open_[facility_id]) {
+    return false;
+  }
+  if (amount <= kAmountTolerance) {
+    return false;
+  }
+
+  const double residual_capacity = residual_capacity_[facility_id];
+  if (amount - residual_capacity > kAmountTolerance) {
+    return false;
+  }
+
+  const double demand = instance_.GetCustomerDemand(customer_id);
+  const double assigned_amount = GetAssignedAmount(customer_id, facility_id);
+  if (assigned_amount + amount - demand > kAmountTolerance) {
+    return false;
+  }
+
+  const double assigned_fraction_sum = GetCustomerAssignedFractionSum(customer_id);
+  if (assigned_fraction_sum + amount / demand - 1.0 > kFractionTolerance) {
+    return false;
+  }
+
+  // Only check incompatibilities if the customer is not already assigned to the facility.
+  if (!assignment_[customer_id][facility_id] &&
+      incompatibility_count_[customer_id][facility_id] != 0) {
     return false;
   }
 
@@ -310,9 +355,18 @@ bool MsCflpCiSolution::CanAddFlow(int customer_id, int facility_id, double amoun
  * @return True if the flow can be removed, false otherwise.
  */
 bool MsCflpCiSolution::CanRemoveFlow(int customer_id, int facility_id, double amount) const {
-  if (!IsValidCustomerId(customer_id) || !IsValidFacilityId(facility_id) ||
-      amount <= 0.0 || !assignment_[customer_id][facility_id] ||
-      amount > GetAssignedAmount(customer_id, facility_id) + 1e-9) {
+  if (!IsValidCustomerId(customer_id) || !IsValidFacilityId(facility_id)) {
+    return false;
+  }
+  if (!assignment_[customer_id][facility_id]) {
+    return false;
+  }
+  if (amount <= kAmountTolerance) {
+    return false;
+  }
+
+  const double assigned_amount = GetAssignedAmount(customer_id, facility_id);
+  if (amount - assigned_amount > kAmountTolerance) {
     return false;
   }
 
@@ -322,20 +376,39 @@ bool MsCflpCiSolution::CanRemoveFlow(int customer_id, int facility_id, double am
 /**
  * @brief Checks whether a shift move is feasible.
  *
- * @param customer_id Customer identifier.
- * @param source_facility Source facility.
- * @param target_facility Target facility.
- * @param amount Amount of demand units to shift.
- * @return True if the move is feasible, false otherwise.
+ * This version avoids relying on CanAddFlow/CanRemoveFlow, which are too restrictive
+ * for shift operations. Instead, it directly checks the true conditions of a shift:
+ * - enough flow in source,
+ * - enough capacity in target,
+ * - incompatibilities,
+ * - facilities open.
  */
-bool MsCflpCiSolution::CanShiftFlow(int customer_id, int source_facility, int target_facility, double amount) const {
+bool MsCflpCiSolution::CanShiftFlow(
+    int customer_id, int source_facility, int target_facility, double amount) const {
+  if (!IsValidCustomerId(customer_id) ||
+      !IsValidFacilityId(source_facility) ||
+      !IsValidFacilityId(target_facility)) {
+    return false;
+  }
   if (source_facility == target_facility) {
     return false;
   }
-  if (!CanRemoveFlow(customer_id, source_facility, amount)) {
+  if (amount <= kAmountTolerance) {
     return false;
   }
-  if (!CanAddFlow(customer_id, target_facility, amount)) {
+  if (!factory_open_[target_facility]) {
+    return false;
+  }
+  const double source_amount = GetAssignedAmount(customer_id, source_facility);
+  if (!assignment_[customer_id][source_facility] ||
+      amount - source_amount > kAmountTolerance) {
+    return false;
+  }
+  if (!assignment_[customer_id][target_facility] &&
+      incompatibility_count_[customer_id][target_facility] != 0) {
+    return false;
+  }
+  if (amount - residual_capacity_[target_facility] > kAmountTolerance) {
     return false;
   }
 
@@ -356,18 +429,30 @@ bool MsCflpCiSolution::AddFlow(int customer_id, int facility_id, double amount) 
   if (!CanAddFlow(customer_id, facility_id, amount)) {
     return false;
   }
-  double demand = instance_.GetCustomerDemand(customer_id);
-  double fraction = amount / demand;
-  bool was_assigned = assignment_[customer_id][facility_id];
+
+  const double demand = instance_.GetCustomerDemand(customer_id);
+  const double fraction = amount / demand;
+  const bool was_assigned = assignment_[customer_id][facility_id];
 
   assignment_fraction_[customer_id][facility_id] += fraction;
+  assignment_fraction_[customer_id][facility_id] =
+      ClampFraction(assignment_fraction_[customer_id][facility_id]);
+
   residual_capacity_[facility_id] -= amount;
+  residual_capacity_[facility_id] = ClampNearZero(residual_capacity_[facility_id]);
+  if (residual_capacity_[facility_id] < 0.0 &&
+      std::fabs(residual_capacity_[facility_id]) <= kAmountTolerance) {
+    residual_capacity_[facility_id] = 0.0;
+  }
+
   transport_cost_ += instance_.GetAssignmentCost(customer_id, facility_id) * amount;
+
   if (!was_assigned) {
     assignment_[customer_id][facility_id] = true;
     AddCustomerToFacilityLists(customer_id, facility_id);
     IncreaseIncompatibilityCounters(customer_id, facility_id);
   }
+
   total_cost_ = fixed_cost_ + transport_cost_;
   return true;
 }
@@ -386,17 +471,27 @@ bool MsCflpCiSolution::RemoveFlow(int customer_id, int facility_id, double amoun
   if (!CanRemoveFlow(customer_id, facility_id, amount)) {
     return false;
   }
-  double demand = instance_.GetCustomerDemand(customer_id);
-  double fraction = amount / demand;
-  assignment_fraction_[customer_id][facility_id] -= fraction;
 
-  if (std::fabs(assignment_fraction_[customer_id][facility_id]) <= 1e-9) {
+  const double demand = instance_.GetCustomerDemand(customer_id);
+  const double fraction = amount / demand;
+
+  assignment_fraction_[customer_id][facility_id] -= fraction;
+  assignment_fraction_[customer_id][facility_id] =
+      ClampFraction(assignment_fraction_[customer_id][facility_id]);
+
+  if (assignment_fraction_[customer_id][facility_id] < 0.0 &&
+      std::fabs(assignment_fraction_[customer_id][facility_id]) <= kFractionTolerance) {
     assignment_fraction_[customer_id][facility_id] = 0.0;
   }
+
   residual_capacity_[facility_id] += amount;
+  residual_capacity_[facility_id] = ClampNearZero(residual_capacity_[facility_id]);
+
   transport_cost_ -= instance_.GetAssignmentCost(customer_id, facility_id) * amount;
 
-  if (assignment_fraction_[customer_id][facility_id] == 0.0 && assignment_[customer_id][facility_id]) {
+  if (assignment_fraction_[customer_id][facility_id] <= kFractionTolerance &&
+      assignment_[customer_id][facility_id]) {
+    assignment_fraction_[customer_id][facility_id] = 0.0;
     assignment_[customer_id][facility_id] = false;
     DecreaseIncompatibilityCounters(customer_id, facility_id);
     RemoveCustomerFromFacilityLists(customer_id, facility_id);
@@ -415,9 +510,13 @@ bool MsCflpCiSolution::RemoveFlow(int customer_id, int facility_id, double amoun
  * @param amount Amount of demand units to shift.
  * @return True if the move is applied, false otherwise.
  */
-bool MsCflpCiSolution::ShiftFlow(int customer_id, int source_facility, int target_facility, double amount) {
-  if (!CanShiftFlow(customer_id, source_facility, target_facility, amount) || 
-      !RemoveFlow(customer_id, source_facility, amount)) {
+bool MsCflpCiSolution::ShiftFlow(
+    int customer_id, int source_facility, int target_facility, double amount) {
+  if (!CanShiftFlow(customer_id, source_facility, target_facility, amount)) {
+    return false;
+  }
+
+  if (!RemoveFlow(customer_id, source_facility, amount)) {
     return false;
   }
   if (!AddFlow(customer_id, target_facility, amount)) {
@@ -440,7 +539,6 @@ bool MsCflpCiSolution::ShiftFlow(int customer_id, int source_facility, int targe
  * @return Delta value of the move.
  */
 double MsCflpCiSolution::EvaluateShiftDelta(int customer_id, int source_facility, int target_facility, double amount) const {
-  // This may be problematic.
   if (!CanShiftFlow(customer_id, source_facility, target_facility, amount)) {
     throw std::invalid_argument("Infeasible shift move.");
   }
@@ -722,7 +820,7 @@ double MsCflpCiSolution::GetCustomerAssignedFractionSum(int customer_id) const {
     sum += assignment_fraction_[customer_id][j];
   }
 
-  return sum;
+  return ClampFraction(sum);
 }
 
 /**
@@ -737,7 +835,7 @@ double MsCflpCiSolution::GetFacilityUsedCapacity(int facility_id) const {
     used_capacity += GetAssignedAmount(i, facility_id);
   }
 
-  return used_capacity;
+  return ClampNearZero(used_capacity);
 }
 
 /**
@@ -749,33 +847,49 @@ double MsCflpCiSolution::GetFacilityUsedCapacity(int facility_id) const {
  * @param facility_b Facility serving the second customer.
  * @return True if the swap is feasible, false otherwise.
  */
-bool MsCflpCiSolution::CanSwapCustomersBetweenFacilities(int customer_a, int facility_a, int customer_b, int facility_b) const {
-  if (facility_a == facility_b) return false;
-  if (assignment_fraction_[customer_a][facility_a] <= 1e-9 ||
-      assignment_fraction_[customer_b][facility_b] <= 1e-9) {
+bool MsCflpCiSolution::CanSwapCustomersBetweenFacilities(
+    int customer_a, int facility_a, int customer_b, int facility_b) const {
+  if (facility_a == facility_b) {
     return false;
   }
-  MsCflpCiSolution tmp(*this);
 
+  if (!IsCustomerFullySatisfied(customer_a) || !IsCustomerFullySatisfied(customer_b)) {
+    return false;
+  }
+
+  if (facilities_of_[customer_a].size() != 1 || facilities_of_[customer_b].size() != 1) {
+    return false;
+  }
+
+  if (!assignment_[customer_a][facility_a] || !assignment_[customer_b][facility_b]) {
+    return false;
+  }
+
+  const double amount_a = GetAssignedAmount(customer_a, facility_a);
+  const double amount_b = GetAssignedAmount(customer_b, facility_b);
   const double demand_a = instance_.GetCustomerDemand(customer_a);
   const double demand_b = instance_.GetCustomerDemand(customer_b);
 
-  const double amount_a = assignment_fraction_[customer_a][facility_a] * demand_a;
-  const double amount_b = assignment_fraction_[customer_b][facility_b] * demand_b;
+  if (std::fabs(amount_a - demand_a) > kAmountTolerance) {
+    return false;
+  }
+  if (std::fabs(amount_b - demand_b) > kAmountTolerance) {
+    return false;
+  }
+
+  MsCflpCiSolution tmp(*this);
 
   if (!tmp.RemoveFlow(customer_a, facility_a, amount_a)) return false;
   if (!tmp.RemoveFlow(customer_b, facility_b, amount_b)) return false;
   if (!tmp.AddFlow(customer_a, facility_b, amount_a)) return false;
   if (!tmp.AddFlow(customer_b, facility_a, amount_b)) return false;
 
-  return true;
+  return tmp.IsFeasible();
 }
 
 double MsCflpCiSolution::EvaluateSwapDelta(int customer_a, int facility_a, int customer_b, int facility_b) const {
-  const double demand_a = instance_.GetCustomerDemand(customer_a);
-  const double demand_b = instance_.GetCustomerDemand(customer_b);
-  const double amount_a = assignment_fraction_[customer_a][facility_a] * demand_a;
-  const double amount_b = assignment_fraction_[customer_b][facility_b] * demand_b;
+  const double amount_a = instance_.GetCustomerDemand(customer_a);
+  const double amount_b = instance_.GetCustomerDemand(customer_b);
 
   const double cost_a_old = instance_.GetAssignmentCost(customer_a, facility_a);
   const double cost_a_new = instance_.GetAssignmentCost(customer_a, facility_b);
