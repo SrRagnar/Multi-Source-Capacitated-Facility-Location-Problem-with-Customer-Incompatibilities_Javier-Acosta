@@ -18,10 +18,21 @@
 #include "ms_cflp_ci_solution.h"
 #include "ms_cflp_ci_instance.h"
 
+/**
+ * @brief Preprocesses the input instance.
+ *
+ * @param input The input instance to preprocess.
+ */
 void GraspMsCflpCiSolver::Preprocess(Instance* input) {
   return;
 }
 
+/**
+ * @brief Constructs a solution for the input instance.
+ *
+ * @param input The input instance for which to construct a solution.
+ * @return A pointer to the constructed solution.
+ */
 Solution* GraspMsCflpCiSolver::ConstructSolution(Instance* input) {
   MsCflpCiInstance* instance = dynamic_cast<MsCflpCiInstance*>(input);
   if (instance == nullptr) {
@@ -33,7 +44,7 @@ Solution* GraspMsCflpCiSolver::ConstructSolution(Instance* input) {
   // Fase 1, Facilities selection.
   const double total_demand = original_instance.GetTotalDemand();
   double accumulated_capacity = 0.0;
-  const unsigned cardinality_parameter = 5;  // K parameter for LRC.
+  const unsigned cardinality_parameter = 2;  // K parameter for LRC.
   while (accumulated_capacity < total_demand) {
     std::vector<int> facilities_by_score = GetSortedFacilitiesByScore(original_instance, *constructive_solution);
     if (facilities_by_score.empty()) {
@@ -58,7 +69,7 @@ Solution* GraspMsCflpCiSolver::ConstructSolution(Instance* input) {
       break;
     }
     unsigned current_rcl_size = std::min(
-        slack_parameter,
+        cardinality_parameter,
         static_cast<unsigned>(facilities_by_score.size()));
 
     unsigned facility_index = std::rand() % current_rcl_size;
@@ -75,16 +86,16 @@ Solution* GraspMsCflpCiSolver::ConstructSolution(Instance* input) {
     // LRC for customer assignment.
     size_t factory_index = 0;
     while (customer_demands[customer_id] >= 1e-6) {
-      const std::vector<int>& facilities_by_current_cost = 
-          GetSortedFacilitiesByCostForCustomer(*constructive_solution, customer_id);
-
+      const std::vector<int>& facilities_by_current_cost = GetSortedFacilitiesByCostForCustomer(*constructive_solution, customer_id);
       if (facilities_by_current_cost.empty()) {
         // Not feasible to assign this customer, but we should have enough slack to handle this.
+        delete constructive_solution;
         return nullptr;
       }
-      factory_index = std::min(
-          std::rand() % cardinality_parameter, 
-          static_cast<unsigned>(facilities_by_current_cost.size()) - 1);
+      unsigned rcl_size = std::min(
+          cardinality_parameter, 
+          static_cast<unsigned>(facilities_by_current_cost.size()));
+      factory_index = std::rand() % rcl_size;
 
       const int facility = facilities_by_current_cost[factory_index];
       const double amount_to_assign = std::min(
@@ -96,21 +107,84 @@ Solution* GraspMsCflpCiSolver::ConstructSolution(Instance* input) {
     }
   }
 
+  ++grasp_iterations_;
   return constructive_solution;
 }
 
-void GraspMsCflpCiSolver::Postprocess(Solution* solution) {
-  // Not implemented yet
+/**
+ * @brief Postprocesses the constructed solution by exploring its neighborhood.
+ *
+ * @param solution The solution to postprocess.
+ * @return A pointer to the improved solution after postprocessing.
+ */
+#include <iostream>
+Solution* GraspMsCflpCiSolver::Postprocess(Solution* solution) {
+  MsCflpCiSolution* current = dynamic_cast<MsCflpCiSolution*>(solution);
+  if (current == nullptr) {
+    throw std::invalid_argument("Solution is not of type MsCflpCiSolution.");
+  }
+  while (true) {
+    MsCflpCiSolution* shift_neighbor = ExploreShiftNeighborhood(current);
+    if (shift_neighbor != nullptr) {
+      std::cout << shift_neighbor->GetTotalCost() << std::endl;
+      delete current;
+      current = shift_neighbor;
+      continue;
+    }
+    delete shift_neighbor;
+    MsCflpCiSolution* swap_neighbor = ExploreClientSwapNeighborhood(current);
+    if (swap_neighbor != nullptr) {
+      std::cout << swap_neighbor->GetTotalCost() << std::endl;
+      delete current;
+      current = swap_neighbor;
+      continue;
+    }
+    delete swap_neighbor;
+    break;
+  }
+
+  Solution* final_solution = new MsCflpCiSolution(*current);
+  delete current;
+  return final_solution;
 }
 
+/**
+ * @brief Updates the best solution found so far.
+ *
+ * @param current The current solution to compare against the best.
+ * @param best A reference to the best solution found so far.
+ */
 void GraspMsCflpCiSolver::UpdateBest(Solution* current, Solution*& best) {
-  // Not implemented yet
+  MsCflpCiSolution* current_solution = dynamic_cast<MsCflpCiSolution*>(current);
+  MsCflpCiSolution* best_solution = dynamic_cast<MsCflpCiSolution*>(best);
+  if (current_solution == nullptr) {
+    throw std::invalid_argument("Current solution is not of type MsCflpCiSolution.");
+  }
+  if (best_solution == nullptr || current_solution->GetTotalCost() < best_solution->GetTotalCost()) {
+    delete best;
+    best = new MsCflpCiSolution(*current_solution);
+  }
 }
 
-bool GraspMsCflpCiSolver::StopCriterion() const {
-  return true;
+/**
+ * @brief Checks if the stopping criterion for the GRASP algorithm is met.
+ *
+ * @return true if the stopping criterion is met, false otherwise.
+ */
+bool GraspMsCflpCiSolver::StopCriterion() {
+  if (grasp_iterations_ >= max_grasp_iterations_) {
+    grasp_iterations_ = 0;
+    return true;
+  }
+  return false;
 }
 
+/**
+ * @brief Finds the slack value for the instance.
+ *
+ * @param instance The instance for which to find the slack value.
+ * @return The slack value.
+ */
 unsigned GraspMsCflpCiSolver::FindSlackValue(const MsCflpCiInstance& instance) const {
   const unsigned total_incompatibilities = instance.GetIncompatibilityPairs().size();
   if (total_incompatibilities == 0) {
@@ -121,6 +195,13 @@ unsigned GraspMsCflpCiSolver::FindSlackValue(const MsCflpCiInstance& instance) c
   return std::min(slack, static_cast<unsigned>(instance.GetFacilityCount() * 0.2));  // Cap at 20% of total facilities
 }
 
+/**
+ * @brief Gets the facilities sorted by their scores.
+ *
+ * @param instance The instance for which to sort facilities.
+ * @param solution The solution for which to evaluate facility scores.
+ * @return A vector containing the facility IDs sorted by their scores.
+ */
 std::vector<int> GraspMsCflpCiSolver::GetSortedFacilitiesByScore(const MsCflpCiInstance& instance, const MsCflpCiSolution& solution) const {
   const double opening_cost_factor = 0.1;
   const double assignment_cost_factor = 0.6;
@@ -189,6 +270,13 @@ std::vector<int> GraspMsCflpCiSolver::GetSortedFacilitiesByScore(const MsCflpCiI
   return facilities_by_score;
 }
 
+/**
+ * @brief Gets the facilities sorted by their costs for a given customer.
+ *
+ * @param solution The solution for which to sort facilities.
+ * @param customer_id The ID of the customer for which to sort facilities.
+ * @return A vector containing the facility IDs sorted by their costs.
+ */
 std::vector<int> GraspMsCflpCiSolver::GetSortedFacilitiesByCostForCustomer(const MsCflpCiSolution& solution, int customer_id) const {
   std::vector<std::pair<int, double>> facilities_with_costs;
   for (int facility_id = 0; facility_id < solution.GetInstance().GetFacilityCount(); ++facility_id) {
@@ -208,4 +296,101 @@ std::vector<int> GraspMsCflpCiSolver::GetSortedFacilitiesByCostForCustomer(const
   }
 
   return facilities_by_cost;
+}
+
+/**
+ * @brief Explores the neighborhood of the current solution by shifting the assignment of a customer from one facility to another.
+ *
+ * @param solution The current solution to explore.
+ * @return A pointer to the best neighboring solution found, or nullptr if no improving neighbor exists.
+ */
+MsCflpCiSolution* GraspMsCflpCiSolver::ExploreShiftNeighborhood(MsCflpCiSolution* solution) const {
+  MsCflpCiSolution* best_solution = nullptr;
+  const int customer_count = solution->GetCustomerCount();
+
+  for (int customer_id = 0; customer_id < customer_count; ++customer_id) {
+    const std::vector<int>& current_facilities = solution->GetFacilitiesOf()[customer_id];
+    for (int source_facility : current_facilities) {
+      const std::vector<int>& other_facilities = solution->GetInstance().GetFacilitiesSortedByCostForCustomer(customer_id);
+      for (int target_facility : other_facilities) {
+        if (source_facility != target_facility) {
+          double amount = solution->GetCustomerFacilityFraction(customer_id, source_facility) * solution->GetInstance().GetCustomerDemand(customer_id);
+          // Checks if the new solution would be feasible.
+          if (solution->CanShiftFlow(customer_id, source_facility, target_facility, amount)) {
+            double delta = solution->EvaluateShiftDelta(customer_id, source_facility, target_facility, amount);
+            // Only consider improving moves, without calculating the whole new objective value.
+            if (delta < -1e-6) {
+              std::cout << "Found improving shift: Customer " << customer_id << " from Facility " << source_facility
+                        << " to Facility " << target_facility
+                        << " (Delta: " << delta << ")" << std::endl;
+              MsCflpCiSolution* new_solution = new MsCflpCiSolution(*solution);
+              new_solution->ShiftFlow(customer_id, source_facility, target_facility, amount);
+               // Compare against best neighbor found so far if there is one.
+              if (best_solution == nullptr || new_solution->GetTotalCost() < best_solution->GetTotalCost()) {
+                delete best_solution;
+                best_solution = new_solution;
+              } else {
+                delete new_solution;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  return best_solution;
+}
+
+/**
+ * @brief Explores the neighborhood of the current solution by swapping the assignments of two customers.
+ *
+ * @param solution The current solution to explore.
+ * @return A pointer to the best neighboring solution found, or nullptr if no improving neighbor exists.
+ */
+MsCflpCiSolution* GraspMsCflpCiSolver::ExploreClientSwapNeighborhood(MsCflpCiSolution* solution) const {
+  MsCflpCiSolution* best_neighbor = nullptr;
+  const int customer_count = solution->GetCustomerCount();
+  for (int customer_a = 0; customer_a < customer_count; ++customer_a) {
+    // Avoid duplicate pairs and self-swapping.
+    for (int customer_b = customer_a + 1; customer_b < customer_count; ++customer_b) {
+      const std::vector<int>& facilities_a = solution->GetFacilitiesOf()[customer_a];
+      const std::vector<int>& facilities_b = solution->GetFacilitiesOf()[customer_b];
+      for (int facility_a : facilities_a) {
+        for (int facility_b : facilities_b) {
+          if (facility_a == facility_b) {
+            continue;
+          }
+          // Check feasibility of the swap.
+          if (!solution->CanSwapCustomersBetweenFacilities(customer_a, facility_a, customer_b, facility_b)) {
+            continue;
+          }
+          double delta = solution->EvaluateSwapDelta(customer_a, facility_a, customer_b, facility_b);
+          // Only consider improving moves, without calculating the whole new objective value.
+          if (delta < -1e-6) {
+            std::cout << "Found improving swap: Customer " << customer_a << " from Facility " << facility_a
+                      << " with Customer " << customer_b << " from Facility " << facility_b
+                      << " (Delta: " << delta << ")" << std::endl;
+            MsCflpCiSolution* new_solution = new MsCflpCiSolution(*solution);
+            double amount_a = solution->GetCustomerFacilityFraction(customer_a, facility_a) * 
+                              solution->GetInstance().GetCustomerDemand(customer_a);
+            double amount_b = solution->GetCustomerFacilityFraction(customer_b, facility_b) * 
+                              solution->GetInstance().GetCustomerDemand(customer_b);
+            new_solution->RemoveFlow(customer_a, facility_a, amount_a);
+            new_solution->RemoveFlow(customer_b, facility_b, amount_b);
+            new_solution->AddFlow(customer_a, facility_b, amount_a);
+            new_solution->AddFlow(customer_b, facility_a, amount_b);
+            // Compare against best neighbor found so far if there is one.
+            if (best_neighbor == nullptr || new_solution->GetTotalCost() < best_neighbor->GetTotalCost()) {
+              delete best_neighbor;
+              best_neighbor = new_solution;
+            } else {
+              delete new_solution;
+            }
+          }
+        }
+      }
+    }
+  }
+  return best_neighbor;
 }

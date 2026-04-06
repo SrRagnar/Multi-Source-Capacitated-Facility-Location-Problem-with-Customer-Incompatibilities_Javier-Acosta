@@ -25,19 +25,22 @@ class GraspMsCflpCiSolver : public GraspAlgorythm {
  protected:
   void Preprocess(Instance* input) override;
   Solution* ConstructSolution(Instance* input) override;
-  void Postprocess(Solution* solution) override;
+  Solution* Postprocess(Solution* solution) override;
   void UpdateBest(Solution* current, Solution*& best) override;
-  bool StopCriterion() const override;
+  bool StopCriterion() override;
  
  private:
+  unsigned grasp_iterations_ = 0;
+  unsigned max_grasp_iterations_ = 10;
+
   unsigned FindSlackValue(const MsCflpCiInstance& instance) const;
   std::vector<int> GetSortedFacilitiesByScore(const MsCflpCiInstance& instance, const MsCflpCiSolution& solution) const;
   std::vector<int> GetSortedFacilitiesByCostForCustomer(const MsCflpCiSolution& solution, int customer_id) const;
 
-  MsCflpCiSolution* LocalSeachByShifting(MsCflpCiSolution* solution) const;
-  MsCflpCiSolution* LocalSearchBySwapingClients(MsCflpCiSolution* solution) const;
-  MsCflpCiSolution* LocalSearchBySwapingFacilities(MsCflpCiSolution* solution) const;
-  MsCflpCiSolution* LocalSearchByRemovingIncompatibilities(MsCflpCiSolution* solution) const;
+  MsCflpCiSolution* ExploreShiftNeighborhood(MsCflpCiSolution* solution) const;
+  MsCflpCiSolution* ExploreClientSwapNeighborhood(MsCflpCiSolution* solution) const;
+  MsCflpCiSolution* ExploreFacilitySwapNeighborhood(MsCflpCiSolution* solution) const;
+  MsCflpCiSolution* ExploreIncompatibilitiesRemoveNeighborhood(MsCflpCiSolution* solution) const;
 };
 
 #endif

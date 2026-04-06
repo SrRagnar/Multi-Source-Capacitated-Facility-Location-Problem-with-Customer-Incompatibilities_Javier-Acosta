@@ -27,9 +27,9 @@ class GraspAlgorythm : public Algorythm {
  protected:
   virtual void Preprocess(Instance* input) = 0;
   virtual Solution* ConstructSolution(Instance* input) = 0;
-  virtual void Postprocess(Solution* solution) = 0;  
+  virtual Solution* Postprocess(Solution* solution) = 0;
   virtual void UpdateBest(Solution* current, Solution*& best) = 0;
-  virtual bool StopCriterion() const = 0;
+  virtual bool StopCriterion() = 0;
 };
 
 #endif

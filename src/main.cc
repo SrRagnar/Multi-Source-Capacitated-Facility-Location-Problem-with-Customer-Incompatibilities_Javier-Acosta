@@ -12,10 +12,13 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <random>
+#include <ctime>
 
 #include "ms_cflp_ci_instance_csi_loader.h"
 #include "ms_cflp_ci_general_solver.h"
 #include "greedy_ms_cflp_ci_solver.h"
+#include "grasp_ms_cflp_ci_solver.h"
 
 /**
  * @brief Main function of the program, responsible for loading an instance from a file,
@@ -30,16 +33,17 @@ int main(int argc, char* argv[]) {
     std::cerr << "Usage: " << argv[0] << " <instance_file.dzn>" << std::endl;
     return 1;
   }
+  std::srand(static_cast<unsigned>(std::time(nullptr)));
   try {
     MsCflpCiInstanceCsiLoader loader(argv[1]);
     MsCflpCiInstance* instance = loader.Load();
-    MsCflpCiGeneralSolver solver(new GreedyMsCflpCiSolver());
+    MsCflpCiGeneralSolver solver(new GraspMsCflpCiSolver());
     MsCflpCiSolution* solution = solver.SolveMsCflpCiInstance(instance);
     if (solution->IsFeasible()) {
       std::cout << "Solution is feasible." << std::endl;
     } else {
       std::cout << "Solution is not feasible." << std::endl;
-      return 1;
+      //return 1;
     } 
     std::cout << "Total Cost: " << solution->GetTotalCost() << std::endl;
     delete solution;

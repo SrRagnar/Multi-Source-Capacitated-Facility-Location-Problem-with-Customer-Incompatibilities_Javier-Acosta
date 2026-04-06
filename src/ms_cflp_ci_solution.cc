@@ -12,6 +12,8 @@
 
 #include "ms_cflp_ci_solution.h"
 
+#include <iostream>
+
 #include <algorithm>
 #include <cmath>
 #include <stdexcept>
@@ -482,6 +484,7 @@ bool MsCflpCiSolution::IsFeasible(double tolerance) const {
 
   for (int i = 0; i < customer_count; ++i) {
     if (!IsCustomerFullySatisfied(i, tolerance)) {
+      std::cerr << "Customer " << i << " is not fully satisfied by " << GetCustomerAssignedFractionSum(i) << "." << std::endl;  
       return false;
     }
   }
@@ -489,12 +492,15 @@ bool MsCflpCiSolution::IsFeasible(double tolerance) const {
     double used_capacity = GetFacilityUsedCapacity(j);
     double expected_residual = instance_.GetFacilityCapacity(j) - used_capacity;
     if (used_capacity - instance_.GetFacilityCapacity(j) > tolerance) {
+      std::cerr << "Facility " << j << " exceeds capacity." << std::endl;
       return false;
     }
     if (std::fabs(residual_capacity_[j] - expected_residual) > tolerance) {
+      std::cerr << "Facility " << j << " has inconsistent residual capacity." << std::endl;
       return false;
     }
     if (!factory_open_[j] && used_capacity > tolerance) {
+      std::cerr << "Facility " << j << " is closed but has assigned customers." << std::endl;
       return false;
     }
   }
@@ -502,10 +508,14 @@ bool MsCflpCiSolution::IsFeasible(double tolerance) const {
     for (int j = 0; j < facility_count; ++j) {
       bool should_be_assigned = assignment_fraction_[i][j] > tolerance;
       if (assignment_[i][j] != should_be_assigned) {
+        std::cerr << "Inconsistency between fraction and binary assignment for customer " << i
+                  << " and facility " << j << "." << std::endl;
         return false;
       }
       if (assignment_fraction_[i][j] < -tolerance ||
           assignment_fraction_[i][j] > 1.0 + tolerance) {
+        std::cerr << "Invalid assignment fraction for customer " << i
+                  << " and facility " << j << "." << std::endl;
         return false;
       }
     }
@@ -515,6 +525,8 @@ bool MsCflpCiSolution::IsFeasible(double tolerance) const {
     for (int a = 0; a < static_cast<int>(customers.size()); ++a) {
       for (int b = a + 1; b < static_cast<int>(customers.size()); ++b) {
         if (instance_.AreCustomersIncompatible(customers[a], customers[b])) {
+          std::cerr << "Incompatibility violation between customers " << customers[a]
+                    << " and " << customers[b] << " in facility " << j << "." << std::endl;
           return false;
         }
       }
@@ -726,4 +738,53 @@ double MsCflpCiSolution::GetFacilityUsedCapacity(int facility_id) const {
   }
 
   return used_capacity;
+}
+
+/**
+ * @brief Checks whether two customers can be swapped between two facilities.
+ *
+ * @param customer_a First customer identifier.
+ * @param facility_a Facility serving the first customer.
+ * @param customer_b Second customer identifier.
+ * @param facility_b Facility serving the second customer.
+ * @return True if the swap is feasible, false otherwise.
+ */
+bool MsCflpCiSolution::CanSwapCustomersBetweenFacilities(int customer_a, int facility_a, int customer_b, int facility_b) const {
+  if (facility_a == facility_b) return false;
+  if (assignment_fraction_[customer_a][facility_a] <= 1e-9 ||
+      assignment_fraction_[customer_b][facility_b] <= 1e-9) {
+    return false;
+  }
+  MsCflpCiSolution tmp(*this);
+
+  const double demand_a = instance_.GetCustomerDemand(customer_a);
+  const double demand_b = instance_.GetCustomerDemand(customer_b);
+
+  const double amount_a = assignment_fraction_[customer_a][facility_a] * demand_a;
+  const double amount_b = assignment_fraction_[customer_b][facility_b] * demand_b;
+
+  if (!tmp.RemoveFlow(customer_a, facility_a, amount_a)) return false;
+  if (!tmp.RemoveFlow(customer_b, facility_b, amount_b)) return false;
+  if (!tmp.AddFlow(customer_a, facility_b, amount_a)) return false;
+  if (!tmp.AddFlow(customer_b, facility_a, amount_b)) return false;
+
+  return true;
+}
+
+double MsCflpCiSolution::EvaluateSwapDelta(int customer_a, int facility_a, int customer_b, int facility_b) const {
+  const double demand_a = instance_.GetCustomerDemand(customer_a);
+  const double demand_b = instance_.GetCustomerDemand(customer_b);
+  const double amount_a = assignment_fraction_[customer_a][facility_a] * demand_a;
+  const double amount_b = assignment_fraction_[customer_b][facility_b] * demand_b;
+
+  const double cost_a_old = instance_.GetAssignmentCost(customer_a, facility_a);
+  const double cost_a_new = instance_.GetAssignmentCost(customer_a, facility_b);
+  const double cost_b_old = instance_.GetAssignmentCost(customer_b, facility_b);
+  const double cost_b_new = instance_.GetAssignmentCost(customer_b, facility_a);
+
+  double delta = 0.0;
+  delta += (cost_a_new - cost_a_old) * amount_a;
+  delta += (cost_b_new - cost_b_old) * amount_b;
+
+  return delta;
 }

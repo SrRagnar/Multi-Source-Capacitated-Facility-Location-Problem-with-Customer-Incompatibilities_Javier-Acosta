@@ -34,9 +34,13 @@ Solution* GraspAlgorythm::Solve(Instance* input) {
     if (current_solution == nullptr) {
       throw std::runtime_error("ConstructSolution returned null, not feasible solution could be found.");
     }
-    Postprocess(current_solution);
+    // Postprocess is responsuble for freeing the original (current) solution if needed.
+    current_solution = Postprocess(current_solution);
+    if (current_solution == nullptr) {
+      throw std::runtime_error("Postprocess returned null.");
+    }
+    // UpdateBest is responsible for freeing the current solution if it is not better than the best one.
     UpdateBest(current_solution, best_solution);
-    delete current_solution;
   } while (!StopCriterion());
 
   return best_solution;

@@ -59,8 +59,10 @@ class MsCflpCiSolution : public Solution {
   bool CanAddFlow(int customer_id, int facility_id, double amount) const;
   bool CanRemoveFlow(int customer_id, int facility_id, double amount) const;
   bool CanShiftFlow(int customer_id, int source_facility, int target_facility, double amount) const;
+  bool CanSwapCustomersBetweenFacilities(int customer_a, int facility_a, int customer_b, int facility_b) const;
 
   double EvaluateShiftDelta(int customer_id, int source_facility, int target_facility, double amount) const;
+  double EvaluateSwapDelta(int customer_a, int facility_a, int customer_b, int facility_b) const;
   bool IsCustomerFullySatisfied(int customer_id, double tolerance = 1e-6) const;
   bool IsFeasible(double tolerance = 1e-6) const;
   // Used to check correct behavior of delta evaluations.
