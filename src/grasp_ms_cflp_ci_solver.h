@@ -34,7 +34,7 @@ class GraspMsCflpCiSolver : public GraspAlgorythm {
  
  private:
   unsigned grasp_iterations_ = 0;
-  unsigned max_grasp_iterations_ = 5;
+  unsigned max_grasp_iterations_ = 100;
   unsigned lcr_cardinality_ = 1;
 
   unsigned FindSlackValue(const MsCflpCiInstance& instance) const;

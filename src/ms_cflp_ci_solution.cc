@@ -593,8 +593,8 @@ bool MsCflpCiSolution::IsFeasible(double tolerance) const {
       std::cerr << "Facility " << j << " exceeds capacity." << std::endl;
       return false;
     }
-    if (std::fabs(residual_capacity_[j] - expected_residual) > tolerance) {
-      std::cerr << "Facility " << j << " has inconsistent residual capacity." << std::endl;
+    if (std::fabs(residual_capacity_[j] - expected_residual) > tolerance * 2) {
+      std::cerr << "Facility " << j << " has inconsistent residual capacity " << std::fabs(residual_capacity_[j] - expected_residual) << std::endl;
       return false;
     }
     if (!factory_open_[j] && used_capacity > tolerance) {

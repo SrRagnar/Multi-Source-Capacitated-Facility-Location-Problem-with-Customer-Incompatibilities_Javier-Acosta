@@ -65,8 +65,9 @@ void PrintTableHeader() {
  * @return Exit code.
  */
 int main(int argc, char* argv[]) {
-  if (argc != 2) {
-    std::cerr << "Usage: " << argv[0] << " <instance_file.dzn>" << std::endl;
+  if (argc != 3) {
+    std::cerr << "Usage: " << argv[0]
+              << " <instance_file.dzn> <grasp|greedy>" << std::endl;
     return 1;
   }
 
@@ -74,10 +75,11 @@ int main(int argc, char* argv[]) {
 
   try {
     const std::string instance_path = argv[1];
+    const std::string algorithm = argv[2];
     const std::string instance_name = GetInstanceName(instance_path);
-    // Values to show in the table.
-    const std::vector<int> lrc_sizes = {1, 2, 3, 5};
+    const std::vector<int> lrc_sizes = {2, 3, 5};
     const int executions = 3;
+
     PrintTableHeader();
     for (std::size_t lrc_index = 0; lrc_index < lrc_sizes.size(); ++lrc_index) {
       const int lrc_size = lrc_sizes[lrc_index];
@@ -85,12 +87,18 @@ int main(int argc, char* argv[]) {
         MsCflpCiInstanceCsiLoader loader(instance_path);
         MsCflpCiInstance* instance = loader.Load();
         auto start = std::chrono::high_resolution_clock::now();
-        MsCflpCiGeneralSolver solver(new GraspMsCflpCiSolver(lrc_size));
-        MsCflpCiSolution* solution = solver.SolveMsCflpCiInstance(instance);
+        MsCflpCiGeneralSolver* solver = nullptr;
+        if (algorithm == "grasp") {
+          solver = new MsCflpCiGeneralSolver(new GraspMsCflpCiSolver(lrc_size));
+        } else if (algorithm == "greedy") {
+          solver = new MsCflpCiGeneralSolver(new GreedyMsCflpCiSolver());
+        } else {
+          delete instance;
+          throw std::invalid_argument("Unknown algorithm: " + algorithm + " (use 'grasp' or 'greedy')");
+        }
+        MsCflpCiSolution* solution = solver->SolveMsCflpCiInstance(instance);
         auto end = std::chrono::high_resolution_clock::now();
-        double cpu_time =
-            std::chrono::duration<double>(end - start).count();
-
+        double cpu_time = std::chrono::duration<double>(end - start).count();
         if (solution == nullptr) {
           std::cout
               << std::left
@@ -105,11 +113,12 @@ int main(int argc, char* argv[]) {
               << std::setw(12) << std::fixed << std::setprecision(6) << cpu_time
               << std::endl;
 
+          delete solver;
           delete instance;
           continue;
         }
         if (!solution->IsFeasible()) {
-          std::cerr << "ERROR: SOLUTION NOT FEASIBLE.";
+          std::cerr << "ERROR: SOLUTION NOT FEASIBLE." << std::endl;
         }
         std::cout
             << std::left
@@ -123,8 +132,8 @@ int main(int argc, char* argv[]) {
             << std::setw(10) << solution->CountIncompatibilityViolations()
             << std::setw(12) << std::fixed << std::setprecision(6) << cpu_time
             << std::endl;
-
         delete solution;
+        delete solver;
         delete instance;
       }
 
