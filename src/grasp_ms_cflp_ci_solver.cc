@@ -115,7 +115,7 @@ Solution* GraspMsCflpCiSolver::ConstructSolution(Instance* input) {
     }
   }
 
-  ++grasp_iterations_;
+  ++current_grasp_iteration_;
   //std::cout << " 11111" << std::endl;
   return constructive_solution;
 }
@@ -183,8 +183,8 @@ void GraspMsCflpCiSolver::UpdateBest(Solution* current, Solution*& best) {
  * @return true if the stopping criterion is met, false otherwise.
  */
 bool GraspMsCflpCiSolver::StopCriterion() {
-  if (grasp_iterations_ >= max_grasp_iterations_) {
-    grasp_iterations_ = 0;
+  if (current_grasp_iteration_ >= max_grasp_iterations_) {
+    current_grasp_iteration_ = 0;
     return true;
   }
   return false;
@@ -195,10 +195,8 @@ unsigned GraspMsCflpCiSolver::FindSlackValue(const MsCflpCiInstance& instance) c
   if (total_incompatibilities == 0) {
     return 0;  // No slack needed if there are no incompatibilities.
   }
-  // Simple and conservative heuristic:
-  // open at least one extra facility when incompatibilities exist,
-  // and increase slack smoothly for denser incompatible instances.
-  unsigned slack = 1 + total_incompatibilities / instance.GetCustomerCount();
+  // open at least three extra facility when incompatibilities exist
+  unsigned slack = 3 + total_incompatibilities / instance.GetCustomerCount();
   // Cap the slack so that it does not open too many extra facilities.
   const unsigned facility_count = instance.GetFacilityCount();
   const unsigned max_slack = std::max(1u, facility_count / 5);
@@ -363,7 +361,7 @@ MsCflpCiSolution* GraspMsCflpCiSolver::ExploreShiftNeighborhood(MsCflpCiSolution
               //std::cout << "Found improving shift " << -real_improvement << std::endl;
               delete best_solution;
               best_solution = new_solution;
-              return best_solution; 
+              //return best_solution; 
             } else {
               delete new_solution;
             }
@@ -421,7 +419,7 @@ MsCflpCiSolution* GraspMsCflpCiSolver::ExploreClientSwapNeighborhood(MsCflpCiSol
               //std::cout << "Found improving swap " << -real_improvement << std::endl;
               delete best_neighbor;
               best_neighbor = new_solution;
-              return best_neighbor;
+              //return best_neighbor;
             } else {
               delete new_solution;
             }

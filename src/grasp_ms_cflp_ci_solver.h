@@ -33,8 +33,8 @@ class GraspMsCflpCiSolver : public GraspAlgorythm {
   bool StopCriterion() override;
  
  private:
-  unsigned grasp_iterations_ = 0;
-  unsigned max_grasp_iterations_ = 100;
+  unsigned current_grasp_iteration_ = 0;
+  unsigned max_grasp_iterations_ = 10;
   unsigned lcr_cardinality_ = 1;
 
   unsigned FindSlackValue(const MsCflpCiInstance& instance) const;
