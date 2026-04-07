@@ -1,0 +1,9 @@
+usuario@ubuntu:~/daa/Multi-Source-Capacitated-Facility-Location-Problem-with-Customer-Incompatibilities_Javier-Acosta$ ./practice5_DAA inputs/wlp01.dzn grasp
+Instancia       |LRC|   Ejec.   |J_open|  C. Fijo     C. Asig.    C. Total    Incomp.   CPU_Time    
+----------------------------------------------------------------------------------------------------
+wlp01.dzn       2       1       35        18320.00    16996.00    35316.00    0         144.888137  
+wlp01.dzn       2       2       35        18320.00    16886.00    35206.00    0         143.676122  
+wlp01.dzn       2       3       35        18320.00    16640.00    34960.00    0         144.283794  
+wlp01.dzn       2       4       35        18320.00    17163.00    35483.00    0         134.482051  
+wlp01.dzn       2       5       36        19050.00    16160.00    35210.00    0         138.534487  
+wlp01.dzn       2       6       35        18320.00    17040.00    35360.00    0         138.340894  
