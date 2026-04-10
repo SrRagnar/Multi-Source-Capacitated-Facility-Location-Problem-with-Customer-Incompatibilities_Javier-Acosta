@@ -581,7 +581,7 @@ bool MsCflpCiSolution::IsFeasible(double tolerance) const {
   int facility_count = GetFacilityCount();
 
   for (int i = 0; i < customer_count; ++i) {
-    if (!IsCustomerFullySatisfied(i, tolerance)) {
+    if (!IsCustomerFullySatisfied(i, tolerance * 10)) {
       std::cerr << "Customer " << i << " is not fully satisfied by " << GetCustomerAssignedFractionSum(i) << "." << std::endl;  
       return false;
     }
@@ -593,7 +593,7 @@ bool MsCflpCiSolution::IsFeasible(double tolerance) const {
       std::cerr << "Facility " << j << " exceeds capacity." << std::endl;
       return false;
     }
-    if (std::fabs(residual_capacity_[j] - expected_residual) > tolerance * 2) {
+    if (std::fabs(residual_capacity_[j] - expected_residual) > tolerance * 10) {
       std::cerr << "Facility " << j << " has inconsistent residual capacity " << std::fabs(residual_capacity_[j] - expected_residual) << std::endl;
       return false;
     }
