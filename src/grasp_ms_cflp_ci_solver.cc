@@ -115,7 +115,7 @@ Solution* GraspMsCflpCiSolver::ConstructSolution(Instance* input) {
     }
   }
 
-  ++grasp_iterations_;
+  ++current_grasp_iteration_;
   //std::cout << " 11111" << std::endl;
   return constructive_solution;
 }
@@ -183,8 +183,8 @@ void GraspMsCflpCiSolver::UpdateBest(Solution* current, Solution*& best) {
  * @return true if the stopping criterion is met, false otherwise.
  */
 bool GraspMsCflpCiSolver::StopCriterion() {
-  if (grasp_iterations_ >= max_grasp_iterations_) {
-    grasp_iterations_ = 0;
+  if (current_grasp_iteration_ >= max_grasp_iterations_) {
+    current_grasp_iteration_ = 0;
     return true;
   }
   return false;
@@ -193,12 +193,9 @@ bool GraspMsCflpCiSolver::StopCriterion() {
 unsigned GraspMsCflpCiSolver::FindSlackValue(const MsCflpCiInstance& instance) const {
   const unsigned total_incompatibilities = instance.GetIncompatibilityPairs().size();
   if (total_incompatibilities == 0) {
-    return 0;  // No slack needed if there are no incompatibilities.
+    return 0; 
   }
-  // Simple and conservative heuristic:
-  // open at least one extra facility when incompatibilities exist,
-  // and increase slack smoothly for denser incompatible instances.
-  unsigned slack = 1 + total_incompatibilities / instance.GetCustomerCount();
+  unsigned slack = static_cast<unsigned>(instance.GetFacilityCount() * 0.08) + total_incompatibilities / instance.GetCustomerCount();
   // Cap the slack so that it does not open too many extra facilities.
   const unsigned facility_count = instance.GetFacilityCount();
   const unsigned max_slack = std::max(1u, facility_count / 5);
@@ -358,12 +355,13 @@ MsCflpCiSolution* GraspMsCflpCiSolver::ExploreShiftNeighborhood(MsCflpCiSolution
               delete new_solution;
               continue;
             }
-            const double real_improvement = solution->GetTotalCost() - new_solution->GetTotalCost();
-            if (real_improvement > kImprovementTolerance) {
-              //std::cout << "Found improving shift " << -real_improvement << std::endl;
+            const double new_cost = new_solution->GetTotalCost();
+            const double reference_cost =
+                (best_solution == nullptr) ? solution->GetTotalCost()
+                                          : best_solution->GetTotalCost();
+            if (reference_cost - new_cost > kImprovementTolerance) {
               delete best_solution;
               best_solution = new_solution;
-              return best_solution; 
             } else {
               delete new_solution;
             }
@@ -415,13 +413,14 @@ MsCflpCiSolution* GraspMsCflpCiSolver::ExploreClientSwapNeighborhood(MsCflpCiSol
               delete new_solution;
               continue;
             }
-            const double real_improvement = solution->GetTotalCost() - new_solution->GetTotalCost();
-            // Compare against best neighbor found so far if there is one.
-            if (real_improvement > kImprovementTolerance) {
-              //std::cout << "Found improving swap " << -real_improvement << std::endl;
+            const double new_cost = new_solution->GetTotalCost();
+            const double reference_cost =
+                (best_neighbor == nullptr) ? solution->GetTotalCost()
+                                          : best_neighbor->GetTotalCost();
+
+            if (reference_cost - new_cost > kImprovementTolerance) {
               delete best_neighbor;
               best_neighbor = new_solution;
-              return best_neighbor;
             } else {
               delete new_solution;
             }

@@ -476,8 +476,7 @@ bool MsCflpCiSolution::RemoveFlow(int customer_id, int facility_id, double amoun
   const double fraction = amount / demand;
 
   assignment_fraction_[customer_id][facility_id] -= fraction;
-  assignment_fraction_[customer_id][facility_id] =
-      ClampFraction(assignment_fraction_[customer_id][facility_id]);
+  assignment_fraction_[customer_id][facility_id] = ClampFraction(assignment_fraction_[customer_id][facility_id]);
 
   if (assignment_fraction_[customer_id][facility_id] < 0.0 &&
       std::fabs(assignment_fraction_[customer_id][facility_id]) <= kFractionTolerance) {
