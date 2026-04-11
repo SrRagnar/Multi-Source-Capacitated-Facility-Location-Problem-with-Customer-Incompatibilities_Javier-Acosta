@@ -132,26 +132,18 @@ Solution* GraspMsCflpCiSolver::Postprocess(Solution* solution) {
   if (current == nullptr) {
     throw std::invalid_argument("Solution is not of type MsCflpCiSolution.");
   }
-  //const int kMaxLocalIterations = 1000;
-  //int iteration = 0;
-  while (true) {
-    //std::cout << "2222" << std::endl;
-    //++iteration;
-    MsCflpCiSolution* shift_neighbor = ExploreShiftNeighborhood(current);
-    if (shift_neighbor != nullptr) {
+  
+  size_t explorer_index = 0;
+  while (explorer_index < neighboorhod_explorers_.size()) {
+    MsCflpCiSolution* explored_solution = neighboorhod_explorers_[explorer_index]->Explore(current, kAmountTolerance, 
+                                                                                           kImprovementTolerance);
+    if (explored_solution != nullptr) {
       delete current;
-      current = shift_neighbor;
-      continue;
+      current = explored_solution;
+      explorer_index = 0; 
+    } else {
+      ++explorer_index; 
     }
-    delete shift_neighbor;
-    MsCflpCiSolution* swap_neighbor = ExploreClientSwapNeighborhood(current);
-    if (swap_neighbor != nullptr) {
-      delete current;
-      current = swap_neighbor;
-      continue;
-    }
-    delete swap_neighbor;
-    break;
   }
 
   Solution* final_solution = new MsCflpCiSolution(*current);
@@ -303,131 +295,4 @@ std::vector<int> GraspMsCflpCiSolver::GetSortedFacilitiesByCostForCustomer(const
   }
 
   return facilities_by_cost;
-}
-
-/**
- * @brief Explores the neighborhood by shifting flow between facilities.
- *
- * This version:
- * - Uses only feasible target facilities (open, compatible, with capacity).
- * - Tries partial shifts (not only full reassignment).
- */
-MsCflpCiSolution* GraspMsCflpCiSolver::ExploreShiftNeighborhood(MsCflpCiSolution* solution) const {
-  MsCflpCiSolution* best_solution = nullptr;
-  const int customer_count = solution->GetCustomerCount();
-  // Fractions of flow to test (partial shifts).
-  const std::vector<double> shift_fractions = {0.25, 0.50, 0.75, 1.00};
-
-  for (int customer_id = 0; customer_id < customer_count; ++customer_id) {
-    const std::vector<int>& current_facilities = solution->GetFacilitiesOf()[customer_id];
-    for (int source_facility : current_facilities) {
-      const double current_amount =
-          solution->GetCustomerFacilityFraction(customer_id, source_facility) *
-          solution->GetInstance().GetCustomerDemand(customer_id);
-      if (current_amount <= kAmountTolerance) {
-        continue;
-      }
-      // Use only feasible facilities in the current solution.
-      const std::vector<int> target_facilities = GetSortedFacilitiesByCostForCustomer(*solution, customer_id);
-      for (int target_facility : target_facilities) {
-        if (source_facility == target_facility) {
-          continue;
-        }
-        // Maximum shift limited by source flow and target capacity.
-        const double max_shift_amount = std::min(
-            current_amount,
-            solution->GetResidualCapacity(target_facility));
-        if (max_shift_amount <= kAmountTolerance) {
-          continue;
-        }
-        for (double shift_fraction : shift_fractions) {
-          const double amount = max_shift_amount * shift_fraction;
-          if (amount <= kAmountTolerance) {
-            continue;
-          }
-          if (!solution->CanShiftFlow(customer_id, source_facility, target_facility, amount)) {
-            continue;
-          }
-          const double delta = solution->EvaluateShiftDelta(customer_id, source_facility, target_facility, amount);
-          if (delta < -kImprovementTolerance) {
-            MsCflpCiSolution* new_solution = new MsCflpCiSolution(*solution);
-            if (!new_solution->ShiftFlow(customer_id, source_facility, target_facility, amount)) {
-              delete new_solution;
-              continue;
-            }
-            const double new_cost = new_solution->GetTotalCost();
-            const double reference_cost =
-                (best_solution == nullptr) ? solution->GetTotalCost()
-                                          : best_solution->GetTotalCost();
-            if (reference_cost - new_cost > kImprovementTolerance) {
-              delete best_solution;
-              best_solution = new_solution;
-            } else {
-              delete new_solution;
-            }
-          }
-        }
-      }
-    }
-  }
-
-  return best_solution;
-}
-
-/**
- * @brief Explores the neighborhood of the current solution by swapping the assignments of two customers.
- *
- * @param solution The current solution to explore.
- * @return A pointer to the best neighboring solution found, or nullptr if no improving neighbor exists.
- */
-MsCflpCiSolution* GraspMsCflpCiSolver::ExploreClientSwapNeighborhood(MsCflpCiSolution* solution) const {
-  MsCflpCiSolution* best_neighbor = nullptr;
-  const int customer_count = solution->GetCustomerCount();
-  for (int customer_a = 0; customer_a < customer_count; ++customer_a) {
-    // Avoid duplicate pairs and self-swapping.
-    for (int customer_b = customer_a + 1; customer_b < customer_count; ++customer_b) {
-      const std::vector<int>& facilities_a = solution->GetFacilitiesOf()[customer_a];
-      const std::vector<int>& facilities_b = solution->GetFacilitiesOf()[customer_b];
-      for (int facility_a : facilities_a) {
-        for (int facility_b : facilities_b) {
-          if (facility_a == facility_b) {
-            continue;
-          }
-          // Check feasibility of the swap.
-          if (!solution->CanSwapCustomersBetweenFacilities(customer_a, facility_a, customer_b, facility_b)) {
-            continue;
-          }
-          double delta = solution->EvaluateSwapDelta(customer_a, facility_a, customer_b, facility_b);
-          // Only consider improving moves, without calculating the whole new objective value.
-          if (delta < -kImprovementTolerance) {
-            MsCflpCiSolution* new_solution = new MsCflpCiSolution(*solution);
-            double amount_a = solution->GetCustomerFacilityFraction(customer_a, facility_a) * 
-                              solution->GetInstance().GetCustomerDemand(customer_a);
-            double amount_b = solution->GetCustomerFacilityFraction(customer_b, facility_b) * 
-                              solution->GetInstance().GetCustomerDemand(customer_b);
-            if (!new_solution->RemoveFlow(customer_a, facility_a, amount_a) ||
-                !new_solution->RemoveFlow(customer_b, facility_b, amount_b) ||
-                !new_solution->AddFlow(customer_a, facility_b, amount_a) ||
-                !new_solution->AddFlow(customer_b, facility_a, amount_b)) {
-              // This should never happen.
-              delete new_solution;
-              continue;
-            }
-            const double new_cost = new_solution->GetTotalCost();
-            const double reference_cost =
-                (best_neighbor == nullptr) ? solution->GetTotalCost()
-                                          : best_neighbor->GetTotalCost();
-
-            if (reference_cost - new_cost > kImprovementTolerance) {
-              delete best_neighbor;
-              best_neighbor = new_solution;
-            } else {
-              delete new_solution;
-            }
-          }
-        }
-      }
-    }
-  }
-  return best_neighbor;
 }

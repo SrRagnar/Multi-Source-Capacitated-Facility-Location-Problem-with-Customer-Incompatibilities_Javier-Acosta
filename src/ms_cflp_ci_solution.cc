@@ -396,9 +396,6 @@ bool MsCflpCiSolution::CanShiftFlow(
   if (amount <= kAmountTolerance) {
     return false;
   }
-  if (!factory_open_[target_facility]) {
-    return false;
-  }
   const double source_amount = GetAssignedAmount(customer_id, source_facility);
   if (!assignment_[customer_id][source_facility] ||
       amount - source_amount > kAmountTolerance) {
@@ -515,12 +512,27 @@ bool MsCflpCiSolution::ShiftFlow(
     return false;
   }
 
+  const bool target_was_closed = !factory_open_[target_facility];
+  if (target_was_closed && !OpenFacility(target_facility)) {
+    return false;
+  }
   if (!RemoveFlow(customer_id, source_facility, amount)) {
+    if (target_was_closed) {
+      CloseFacility(target_facility);
+    }
     return false;
   }
   if (!AddFlow(customer_id, target_facility, amount)) {
     AddFlow(customer_id, source_facility, amount);
+    if (target_was_closed) {
+      CloseFacility(target_facility);
+    }
     return false;
+  }
+  if (clients_of_[source_facility].empty()) {
+    if (!CloseFacility(source_facility)) {
+      return false;
+    }
   }
 
   return true;
@@ -538,13 +550,22 @@ bool MsCflpCiSolution::ShiftFlow(
  * @return Delta value of the move.
  */
 double MsCflpCiSolution::EvaluateShiftDelta(int customer_id, int source_facility, int target_facility, double amount) const {
-  if (!CanShiftFlow(customer_id, source_facility, target_facility, amount)) {
+ if (!CanShiftFlow(customer_id, source_facility, target_facility, amount)) {
     throw std::invalid_argument("Infeasible shift move.");
   }
 
-  return amount *
-         (instance_.GetAssignmentCost(customer_id, target_facility) -
-          instance_.GetAssignmentCost(customer_id, source_facility));
+  double delta = amount * (instance_.GetAssignmentCost(customer_id, target_facility) -
+                 instance_.GetAssignmentCost(customer_id, source_facility));
+
+  if (!factory_open_[target_facility]) {
+    delta += instance_.GetFacilityOpeningCost(target_facility);
+  }
+  const double source_amount = GetAssignedAmount(customer_id, source_facility);
+  if (std::fabs(source_amount - amount) <= kAmountTolerance && clients_of_[source_facility].size() == 1) {
+    delta -= instance_.GetFacilityOpeningCost(source_facility);
+  }
+
+  return delta;
 }
 
 /**
@@ -900,4 +921,132 @@ double MsCflpCiSolution::EvaluateSwapDelta(int customer_a, int facility_a, int c
   delta += (cost_b_new - cost_b_old) * amount_b;
 
   return delta;
+}
+
+/**
+ * @brief Checks whether two facilities can be swapped.
+ *
+ * This move is interpreted as:
+ * - closing the currently open facility,
+ * - opening the currently closed facility,
+ * - reassigning all customers served by the open facility to the closed one.
+ *
+ * @param source_facility First facility identifier.
+ * @param target_facility Second facility identifier.
+ * @return True if the swap is feasible, false otherwise.
+ */
+bool MsCflpCiSolution::CanSwapFacilities(int source_facility, int target_facility) const {
+  if (!IsValidFacilityId(source_facility) || !IsValidFacilityId(target_facility)) {
+    return false;
+  }
+  if (source_facility == target_facility) {
+    return false;
+  }
+
+  int open_facility = -1;
+  int closed_facility = -1;
+  if (factory_open_[source_facility] && !factory_open_[target_facility]) {
+    open_facility = source_facility;
+    closed_facility = target_facility;
+  } else if (!factory_open_[source_facility] && factory_open_[target_facility]) {
+    open_facility = target_facility;
+    closed_facility = source_facility;
+  } else {
+    return false;
+  }
+
+  const double used_capacity =
+      instance_.GetFacilityCapacity(open_facility) - residual_capacity_[open_facility];
+  if (used_capacity - instance_.GetFacilityCapacity(closed_facility) > kAmountTolerance) {
+    return false;
+  }
+
+  return true;
+}
+
+/**
+ * @brief Evaluates the objective delta of a facility swap move.
+ *
+ * This move is interpreted as:
+ * - closing the currently open facility,
+ * - opening the currently closed facility,
+ * - reassigning to the new facility all flow currently served by the old one.
+ *
+ * @param source_facility First facility identifier.
+ * @param target_facility Second facility identifier.
+ * @return Delta value of the move.
+ */
+double MsCflpCiSolution::EvaluateFacilitiesSwapDelta(int source_facility, int target_facility) const {
+  int open_facility = -1;
+  int closed_facility = -1;
+  if (factory_open_[source_facility] && !factory_open_[target_facility]) {
+    open_facility = source_facility;
+    closed_facility = target_facility;
+  } else {
+    open_facility = target_facility;
+    closed_facility = source_facility;
+  }
+
+  double delta = 0.0;
+  delta += instance_.GetFacilityOpeningCost(closed_facility);
+  delta -= instance_.GetFacilityOpeningCost(open_facility);
+
+  const std::vector<int>& customers_in_open_facility = clients_of_[open_facility];
+  for (int customer_id : customers_in_open_facility) {
+    const double amount = GetAssignedAmount(customer_id, open_facility);
+    delta += amount * (instance_.GetAssignmentCost(customer_id, closed_facility) -
+                       instance_.GetAssignmentCost(customer_id, open_facility));
+  }
+
+  return delta;
+}
+
+/**
+ * @brief Applies a facility swap move and returns the resulting solution.
+ *
+ * This move is interpreted as:
+ * - closing the currently open facility,
+ * - opening the currently closed facility,
+ * - reassigning to the new facility all flow currently served by the old one.
+ *
+ * @param source_facility First facility identifier.
+ * @param target_facility Second facility identifier.
+ * @return True if successfully applied, false otherwise.
+ */
+bool MsCflpCiSolution::SwapFacilities(int source_facility, int target_facility) {
+  if (!CanSwapFacilities(source_facility, target_facility)) {
+    return false;
+  }
+
+  int open_facility = -1;
+  int closed_facility = -1;
+  if (factory_open_[source_facility] && !factory_open_[target_facility]) {
+    open_facility = source_facility;
+    closed_facility = target_facility;
+  } else {
+    open_facility = target_facility;
+    closed_facility = source_facility;
+  }
+  if (!OpenFacility(closed_facility)) {
+    return false;
+  }
+
+  const std::vector<int> customers_in_open_facility = GetCustomersInFacility()[open_facility];
+  for (int customer_id : customers_in_open_facility) {
+    const double amount =
+        GetCustomerFacilityFraction(customer_id, open_facility) *
+        GetInstance().GetCustomerDemand(customer_id);
+    if (amount <= kAmountTolerance) {
+      continue;
+    }
+    if (!RemoveFlow(customer_id, open_facility, amount) ||
+        !AddFlow(customer_id, closed_facility, amount)) {
+      return false;
+    }
+  }
+  if (!CloseFacility(open_facility)) {
+    return false;
+  }
+
+  return true;
 }

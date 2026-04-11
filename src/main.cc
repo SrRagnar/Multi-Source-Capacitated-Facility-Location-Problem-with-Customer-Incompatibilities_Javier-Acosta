@@ -17,10 +17,16 @@
 #include <string>
 #include <vector>
 
+#include "ms_cflp_ci_solution.h"
+#include "ms_cflp_ci_instance.h"
 #include "ms_cflp_ci_instance_csi_loader.h"
 #include "ms_cflp_ci_general_solver.h"
 #include "greedy_ms_cflp_ci_solver.h"
 #include "grasp_ms_cflp_ci_solver.h"
+#include "ms_cflp_ci_neighboorhod_explorer.h"
+#include "ms_cflp_ci_shift_explorer.h"
+#include "ms_cflp_ci_swap_explorer.h"
+#include "ms_cflp_ci_facility_swap_explorer.h"
 
 /**
  * @brief Extracts the file name from a path.
@@ -77,8 +83,8 @@ int main(int argc, char* argv[]) {
     const std::string instance_path = argv[1];
     const std::string algorithm = argv[2];
     const std::string instance_name = GetInstanceName(instance_path);
-    const std::vector<int> lrc_sizes = {2, 3, 5};
-    const int executions = 10;
+    const std::vector<int> lrc_sizes = {5, 10};
+    const int executions = 1;
 
     PrintTableHeader();
     for (std::size_t lrc_index = 0; lrc_index < lrc_sizes.size(); ++lrc_index) {
@@ -89,7 +95,12 @@ int main(int argc, char* argv[]) {
         auto start = std::chrono::high_resolution_clock::now();
         MsCflpCiGeneralSolver* solver = nullptr;
         if (algorithm == "grasp") {
-          solver = new MsCflpCiGeneralSolver(new GraspMsCflpCiSolver(lrc_size));
+          std::vector<MsCflpCiNeighboorhodExplorer*> explorers = {
+              new MsCflpCiShiftExplorer(),
+              new MsCflpCiSwapExplorer(),
+              new MsCflpCiFacilitiesSwapExplorer()
+          };
+          solver = new MsCflpCiGeneralSolver(new GraspMsCflpCiSolver(lrc_size, explorers));
         } else if (algorithm == "greedy") {
           solver = new MsCflpCiGeneralSolver(new GreedyMsCflpCiSolver());
         } else {

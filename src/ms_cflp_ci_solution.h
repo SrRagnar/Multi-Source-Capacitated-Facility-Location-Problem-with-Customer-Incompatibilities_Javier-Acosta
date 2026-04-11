@@ -69,6 +69,10 @@ class MsCflpCiSolution : public Solution {
   double ComputeObjectiveFromScratch() const;
   bool CheckObjectiveConsistency(double tolerance = 1e-8) const;
 
+  bool CanSwapFacilities(int source_facility, int target_facility) const;
+  double EvaluateFacilitiesSwapDelta(int source_facility, int target_facility) const;
+  bool SwapFacilities(int source_facility, int target_facility);
+
   int CountOpenFacilities() const;
   int CountIncompatibilityViolations() const;
 
