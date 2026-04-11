@@ -869,18 +869,19 @@ double MsCflpCiSolution::GetFacilityUsedCapacity(int facility_id) const {
  */
 bool MsCflpCiSolution::CanSwapCustomersBetweenFacilities(
     int customer_a, int facility_a, int customer_b, int facility_b) const {
-  if (facility_a == facility_b) {
+  if (!IsValidCustomerId(customer_a) || !IsValidCustomerId(customer_b) ||
+      !IsValidFacilityId(facility_a) || !IsValidFacilityId(facility_b)) {
     return false;
   }
-
+  if (customer_a == customer_b || facility_a == facility_b) {
+    return false;
+  }
   if (!IsCustomerFullySatisfied(customer_a) || !IsCustomerFullySatisfied(customer_b)) {
     return false;
   }
-
   if (facilities_of_[customer_a].size() != 1 || facilities_of_[customer_b].size() != 1) {
     return false;
   }
-
   if (!assignment_[customer_a][facility_a] || !assignment_[customer_b][facility_b]) {
     return false;
   }
@@ -890,21 +891,24 @@ bool MsCflpCiSolution::CanSwapCustomersBetweenFacilities(
   const double demand_a = instance_.GetCustomerDemand(customer_a);
   const double demand_b = instance_.GetCustomerDemand(customer_b);
 
-  if (std::fabs(amount_a - demand_a) > kAmountTolerance) {
+  if (std::fabs(amount_a - demand_a) > kAmountTolerance ||
+      std::fabs(amount_b - demand_b) > kAmountTolerance) {
     return false;
   }
-  if (std::fabs(amount_b - demand_b) > kAmountTolerance) {
+  if (amount_b - (residual_capacity_[facility_a] + amount_a) > kAmountTolerance) {
+    return false;
+  }
+  if (amount_a - (residual_capacity_[facility_b] + amount_b) > kAmountTolerance) {
+    return false;
+  }
+  if (incompatibility_count_[customer_a][facility_b] != 0) {
+    return false;
+  }
+  if (incompatibility_count_[customer_b][facility_a] != 0) {
     return false;
   }
 
-  MsCflpCiSolution tmp(*this);
-
-  if (!tmp.RemoveFlow(customer_a, facility_a, amount_a)) return false;
-  if (!tmp.RemoveFlow(customer_b, facility_b, amount_b)) return false;
-  if (!tmp.AddFlow(customer_a, facility_b, amount_a)) return false;
-  if (!tmp.AddFlow(customer_b, facility_a, amount_b)) return false;
-
-  return tmp.IsFeasible();
+  return true;    
 }
 
 double MsCflpCiSolution::EvaluateSwapDelta(int customer_a, int facility_a, int customer_b, int facility_b) const {
