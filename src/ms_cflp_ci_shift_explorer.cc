@@ -12,6 +12,8 @@
 
 #include <algorithm>
 #include <iostream>
+#include <stdexcept>
+#include <cmath>
 
 #include "ms_cflp_ci_shift_explorer.h"
  
@@ -46,10 +48,13 @@ MsCflpCiSolution* MsCflpCiShiftExplorer::Explore(const MsCflpCiSolution* solutio
         if (shift_amount <= amount_tol) {
           continue;
         }
-        if (!solution->CanShiftFlow(customer_id, source_facility, target_facility, shift_amount)) {
+        if (!CanShiftFlow(*solution, customer_id, source_facility, target_facility, shift_amount, 
+                                    amount_tol, improvement_tol)) {
           continue;
         }
-        const double shift_delta = solution->EvaluateShiftDelta(customer_id, source_facility, target_facility, shift_amount);
+        const double shift_delta = EvaluateShiftDelta(*solution, customer_id, source_facility, 
+                                                               target_facility, shift_amount, amount_tol, 
+                                                               improvement_tol);
         if (shift_delta < best_delta - improvement_tol) {
           best_customer_id = customer_id;
           best_source_facility = source_facility;
@@ -64,8 +69,8 @@ MsCflpCiSolution* MsCflpCiShiftExplorer::Explore(const MsCflpCiSolution* solutio
     return nullptr;
   }
   MsCflpCiSolution* best_solution = new MsCflpCiSolution(*solution);
-  if (!best_solution->ShiftFlow(
-          best_customer_id, best_source_facility, best_target_facility, best_shift_amount)) {
+  if (!ShiftFlow(*best_solution, best_customer_id, best_source_facility, best_target_facility, best_shift_amount,
+                  amount_tol, improvement_tol)) {
     delete best_solution;
     std::cerr << "ERROR: Failed to apply the best swap move found." << std::endl;
     return nullptr;
@@ -75,6 +80,15 @@ MsCflpCiSolution* MsCflpCiShiftExplorer::Explore(const MsCflpCiSolution* solutio
   return best_solution;
 }
 
+/**
+ * @brief Gets the facilities sorted by their assignment cost for a given customer.
+ *
+ * @param solution The solution for which to evaluate costs.
+ * @param customer_id Customer identifier.
+ * @param amount_tol Numerical tolerance for flow amounts.
+ * @param improvement_tol Numerical tolerance for improvement acceptance.
+ * @return A vector containing the facility IDs sorted by their assignment cost for the given customer.
+ */
 std::vector<int> MsCflpCiShiftExplorer::GetSortedFacilitiesByCostForCustomer(const MsCflpCiSolution& solution, 
                                                                              int customer_id, double amount_tol, 
                                                                              double improvement_tol) const {
@@ -104,4 +118,138 @@ std::vector<int> MsCflpCiShiftExplorer::GetSortedFacilitiesByCostForCustomer(con
   }
 
   return facilities_by_cost;
+}
+
+/**
+ * @brief Checks whether a shift move is feasible.
+ *
+ * @param solution The solution for which to check feasibility.
+ * @param customer_id Customer identifier.
+ * @param source_facility Source facility.
+ * @param target_facility Target facility.
+ * @param amount Amount of demand units to shift.
+ * @param amount_tol Numerical tolerance for flow amounts.
+ * @param improvement_tol Numerical tolerance for improvement acceptance.
+ * 
+ * @return True if the move is feasible, false otherwise.
+ */
+
+bool MsCflpCiShiftExplorer::CanShiftFlow(const MsCflpCiSolution& solution, 
+                    int customer_id, int source_facility, int target_facility, double amount,
+                    double amount_tol, double improvement_tol) const {
+  if (!solution.IsValidCustomerId(customer_id) ||
+      !solution.IsValidFacilityId(source_facility) ||
+      !solution.IsValidFacilityId(target_facility)) {
+    return false;
+  }
+  if (source_facility == target_facility) {
+    return false;
+  }
+  if (amount <= amount_tol) {
+    return false;
+  }
+  const double source_amount = solution.GetAssignedAmount(customer_id, source_facility);
+  const std::vector<std::vector<bool>>& assignment = solution.GetAssignments();
+  if (!assignment[customer_id][source_facility] ||
+      amount - source_amount > amount_tol) {
+    return false;
+  }
+  const std::vector<std::vector<int>>& incompatibility_count = solution.GetIncompatibilityCounter();
+  if (!assignment[customer_id][target_facility] &&
+      incompatibility_count[customer_id][target_facility] != 0) {
+    return false;
+  }
+  if (amount - solution.GetResidualCapacity(target_facility) > amount_tol) {
+    return false;
+  }
+
+  return true;
+}
+
+
+/**
+ * @brief Evaluates the objective delta of a shift move.
+ *
+ * This method only evaluates the variation in transport cost.
+ *
+ * @param solution The solution for which to evaluate the move.
+ * @param customer_id Customer identifier.
+ * @param source_facility Source facility.
+ * @param target_facility Target facility.
+ * @param amount Amount of demand units to shift.
+ * @param amount_tol Numerical tolerance for flow amounts.
+ * @param improvement_tol Numerical tolerance for improvement acceptance.
+ * 
+ * @return Delta value of the move.
+ */
+double MsCflpCiShiftExplorer::EvaluateShiftDelta(const MsCflpCiSolution& solution, 
+                            int customer_id, int source_facility, int target_facility, double amount,
+                            double amount_tol, double improvement_tol) const {
+  if (!CanShiftFlow(solution, customer_id, source_facility, target_facility, amount, amount_tol, improvement_tol)) {
+    throw std::invalid_argument("Infeasible shift move.");
+  }
+
+  const MsCflpCiInstance& instance = solution.GetInstance();
+  double delta = amount * (instance.GetAssignmentCost(customer_id, target_facility) -
+                 instance.GetAssignmentCost(customer_id, source_facility));
+
+  const std::vector<bool>& factory_open = solution.GetOpenFacilities();
+  if (!factory_open[target_facility]) {
+    delta += instance.GetFacilityOpeningCost(target_facility);
+  }
+  const double source_amount = solution.GetAssignedAmount(customer_id, source_facility);
+  const std::vector<std::vector<int>>& clients_of = solution.GetCustomersInFacility();
+  if (std::fabs(source_amount - amount) <= amount_tol && clients_of[source_facility].size() == 1) {
+    delta -= instance.GetFacilityOpeningCost(source_facility);
+  }
+
+  return delta;
+}
+
+/**
+ * @brief Applies a shift move between two facilities.
+ *
+ * @param solution The solution to which to apply the move.
+ * @param customer_id Customer identifier.
+ * @param source_facility Source facility.
+ * @param target_facility Target facility.
+ * @param amount Amount of demand units to shift.
+ * @param amount_tol Numerical tolerance for flow amounts.
+ * @param improvement_tol Numerical tolerance for improvement acceptance.
+ *
+ * @return True if the move is applied, false otherwise.
+ */
+bool MsCflpCiShiftExplorer::ShiftFlow(MsCflpCiSolution& solution, 
+                 int customer_id, int source_facility, int target_facility, double amount,
+                 double amount_tol, double improvement_tol) const {
+  if (!CanShiftFlow(solution, customer_id, source_facility, target_facility, amount, amount_tol, improvement_tol)) {
+    return false;
+  }
+
+  const std::vector<bool>& factory_open = solution.GetOpenFacilities();
+  const bool target_was_closed = !factory_open[target_facility];
+  if (target_was_closed && !solution.OpenFacility(target_facility)) {
+    return false;
+  }
+  if (!solution.RemoveFlow(customer_id, source_facility, amount)) {
+    if (target_was_closed) {
+      solution.CloseFacility(target_facility);
+    }
+    return false;
+  }
+  if (!solution.AddFlow(customer_id, target_facility, amount)) {
+    solution.AddFlow(customer_id, source_facility, amount);
+    if (target_was_closed) {
+      solution.CloseFacility(target_facility);
+    }
+    return false;
+  }
+  const std::vector<std::vector<int>>& clients_of = solution.GetCustomersInFacility();
+  if (clients_of[source_facility].empty()) {
+    if (!solution.CloseFacility(source_facility)) {
+      return false;
+    }
+  }
+
+  return true;
 }

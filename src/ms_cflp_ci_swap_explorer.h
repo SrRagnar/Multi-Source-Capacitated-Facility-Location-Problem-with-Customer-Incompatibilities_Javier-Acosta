@@ -21,6 +21,14 @@ class MsCflpCiSwapExplorer : public MsCflpCiNeighboorhodExplorer {
   ~MsCflpCiSwapExplorer() override = default;
 
   MsCflpCiSolution* Explore(const MsCflpCiSolution* solution, double amount_tol, double improvement_tol) const override;
+ private:
+  double EvaluateSwapDelta(const MsCflpCiSolution& solution, 
+                           int customer_a, int facility_a, int customer_b, int facility_b,
+                           double amount_tol, double improvement_tol) const;
+
+  bool CanSwapCustomersBetweenFacilities(const MsCflpCiSolution& solution, 
+                                         int customer_a, int facility_a, int customer_b, int facility_b,
+                                         double amount_tol, double improvement_tol) const;
 };
 
 #endif

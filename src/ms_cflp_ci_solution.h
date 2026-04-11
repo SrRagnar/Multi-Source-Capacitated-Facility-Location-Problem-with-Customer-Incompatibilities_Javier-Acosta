@@ -42,6 +42,7 @@ class MsCflpCiSolution : public Solution {
   const std::vector<std::vector<int>>& GetIncompatibilityCounter() const;
   double GetCustomerFacilityFraction(int customer_id, int facility_id) const;
   double GetResidualCapacity(int facility_id) const;
+  double GetAssignedAmount(int customer_id, int facility_id) const;
   double GetFixedCost() const;
   double GetTransportCost() const;
   // Returns the objective value of the solution.
@@ -49,7 +50,6 @@ class MsCflpCiSolution : public Solution {
 
   bool AddFlow(int customer_id, int facility_id, double amount);
   bool RemoveFlow(int customer_id, int facility_id, double amount);
-  bool ShiftFlow(int customer_id, int source_facility, int target_facility, double amount);
   bool OpenFacility(int facility_id);
   bool CloseFacility(int facility_id);
 
@@ -58,27 +58,20 @@ class MsCflpCiSolution : public Solution {
   bool CanAssignCustomerToFacility(int customer_id, int facility_id) const;
   bool CanAddFlow(int customer_id, int facility_id, double amount) const;
   bool CanRemoveFlow(int customer_id, int facility_id, double amount) const;
-  bool CanShiftFlow(int customer_id, int source_facility, int target_facility, double amount) const;
-  bool CanSwapCustomersBetweenFacilities(int customer_a, int facility_a, int customer_b, int facility_b) const;
 
-  double EvaluateShiftDelta(int customer_id, int source_facility, int target_facility, double amount) const;
-  double EvaluateSwapDelta(int customer_a, int facility_a, int customer_b, int facility_b) const;
   bool IsCustomerFullySatisfied(int customer_id, double tolerance = 1e-8) const;
   bool IsFeasible(double tolerance = 1e-8) const;
   // Used to check correct behavior of delta evaluations.
   double ComputeObjectiveFromScratch() const;
   bool CheckObjectiveConsistency(double tolerance = 1e-8) const;
 
-  bool CanSwapFacilities(int source_facility, int target_facility) const;
-  double EvaluateFacilitiesSwapDelta(int source_facility, int target_facility) const;
-  bool SwapFacilities(int source_facility, int target_facility);
-
   int CountOpenFacilities() const;
   int CountIncompatibilityViolations() const;
 
- private:
   bool IsValidCustomerId(int customer_id) const;
   bool IsValidFacilityId(int facility_id) const;
+  
+ private:
   bool HasCustomerInFacility(int customer_id, int facility_id) const;
 
   void AddCustomerToFacilityLists(int customer_id, int facility_id);
@@ -86,7 +79,6 @@ class MsCflpCiSolution : public Solution {
   void IncreaseIncompatibilityCounters(int customer_id, int facility_id);
   void DecreaseIncompatibilityCounters(int customer_id, int facility_id);
 
-  double GetAssignedAmount(int customer_id, int facility_id) const;
   double GetCustomerAssignedFractionSum(int customer_id) const;
   double GetFacilityUsedCapacity(int facility_id) const;
 

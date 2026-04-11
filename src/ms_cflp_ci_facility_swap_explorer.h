@@ -21,6 +21,13 @@ class MsCflpCiFacilitiesSwapExplorer : public MsCflpCiNeighboorhodExplorer {
   ~MsCflpCiFacilitiesSwapExplorer() override = default;
 
   MsCflpCiSolution* Explore(const MsCflpCiSolution* solution, double amount_tol, double improvement_tol) const override;
+ private:
+  bool CanSwapFacilities(const MsCflpCiSolution& solution, int source_facility, int target_facility,
+                         double amount_tol, double improvement_tol) const;
+  double EvaluateFacilitiesSwapDelta(const MsCflpCiSolution& solution, int source_facility, int target_facility,
+                                     double amount_tol, double improvement_tol) const;
+  bool SwapFacilities(MsCflpCiSolution& solution, int source_facility, int target_facility,
+                      double amount_tol, double improvement_tol) const;
 };
 
 #endif

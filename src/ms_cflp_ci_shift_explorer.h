@@ -27,6 +27,17 @@ class MsCflpCiShiftExplorer : public MsCflpCiNeighboorhodExplorer {
   std::vector<int> GetSortedFacilitiesByCostForCustomer(const MsCflpCiSolution& solution, 
                                                         int customer_id, double amount_tol, 
                                                         double improvement_tol) const;
+  bool CanShiftFlow(const MsCflpCiSolution& solution, 
+                    int customer_id, int source_facility, int target_facility, double amount,
+                    double amount_tol, double improvement_tol) const;
+
+  double EvaluateShiftDelta(const MsCflpCiSolution& solution, 
+                            int customer_id, int source_facility, int target_facility, double amount,
+                            double amount_tol, double improvement_tol) const;
+
+  bool ShiftFlow(MsCflpCiSolution& solution, 
+                 int customer_id, int source_facility, int target_facility, double amount,
+                 double amount_tol, double improvement_tol) const;
 };
 
 #endif
