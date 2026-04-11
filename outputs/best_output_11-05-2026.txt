@@ -1,0 +1,9 @@
+javier@javier-VirtualBox:~/DAA/Multi-Source-Capacitated-Facility-Location-Problem-with-Customer-Incompatibilities_Javier-Acosta$ ./practice5_DAA inputs/wlp01.dzn grasp
+Instancia       |LRC|   Ejec.   |J_open|  C. Fijo     C. Asig.    C. Total    Incomp.   CPU_Time    
+----------------------------------------------------------------------------------------------------
+wlp01.dzn       5       1       27        15260.00    16402.00    31662.00    0         406.672521  
+----------------------------------------------------------------------------------------------------
+wlp01.dzn       10      1       26        16050.00    15185.00    31235.00    0         467.645272  
+
+
+# 300 Grasp Iter
