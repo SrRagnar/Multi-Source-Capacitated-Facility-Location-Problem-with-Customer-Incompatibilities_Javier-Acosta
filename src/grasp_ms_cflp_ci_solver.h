@@ -36,7 +36,7 @@ class GraspMsCflpCiSolver : public GraspAlgorythm {
  
  private:
   unsigned current_grasp_iteration_ = 0;
-  unsigned max_grasp_iterations_ = 10;
+  unsigned max_grasp_iterations_ = 300;
   unsigned lcr_cardinality_ = 1;
   std::vector<MsCflpCiNeighboorhodExplorer*> neighboorhod_explorers_;
 
@@ -44,7 +44,6 @@ class GraspMsCflpCiSolver : public GraspAlgorythm {
   std::vector<int> GetSortedFacilitiesByScore(const MsCflpCiInstance& instance, const MsCflpCiSolution& solution) const;
   std::vector<int> GetSortedFacilitiesByCostForCustomer(const MsCflpCiSolution& solution, int customer_id) const;
 
-  MsCflpCiSolution* ExploreFacilitySwapNeighborhood(MsCflpCiSolution* solution) const;
   MsCflpCiSolution* ExploreIncompatibilitiesRemoveNeighborhood(MsCflpCiSolution* solution) const;
 };
 

@@ -27,6 +27,7 @@
 #include "ms_cflp_ci_shift_explorer.h"
 #include "ms_cflp_ci_swap_explorer.h"
 #include "ms_cflp_ci_facility_swap_explorer.h"
+#include "ms_cflp_ci_incompatibilities_remover_explorer.h"
 
 /**
  * @brief Extracts the file name from a path.
@@ -98,7 +99,8 @@ int main(int argc, char* argv[]) {
           std::vector<MsCflpCiNeighboorhodExplorer*> explorers = {
               new MsCflpCiShiftExplorer(),
               new MsCflpCiSwapExplorer(),
-              new MsCflpCiFacilitiesSwapExplorer()
+              new MsCflpCiFacilitiesSwapExplorer(),
+              new MsCflpCIncompabilitiesRemoverExplorer()
           };
           solver = new MsCflpCiGeneralSolver(new GraspMsCflpCiSolver(lrc_size, explorers));
         } else if (algorithm == "greedy") {
