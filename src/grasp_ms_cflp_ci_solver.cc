@@ -20,11 +20,6 @@
 #include "ms_cflp_ci_solution.h"
 #include "ms_cflp_ci_instance.h"
 
-namespace {
-  constexpr double kAmountTolerance = 1e-8;
-  constexpr double kImprovementTolerance = 1e-8;
-}  
-
 /**
  * @brief Preprocesses the input instance.
  *
@@ -51,7 +46,7 @@ Solution* GraspMsCflpCiSolver::ConstructSolution(Instance* input) {
   // Fase 1, Facilities selection.
   const double total_demand = original_instance.GetTotalDemand();
   double accumulated_capacity = 0.0;
-  while (accumulated_capacity + kAmountTolerance < total_demand) {
+  while (accumulated_capacity + kAmountTolerance_ < total_demand) {
     std::vector<int> facilities_by_score = GetSortedFacilitiesByScore(original_instance, *constructive_solution);
     if (facilities_by_score.empty()) {
       break;
@@ -90,7 +85,7 @@ Solution* GraspMsCflpCiSolver::ConstructSolution(Instance* input) {
   std::vector<double> customer_demands = original_instance.GetCustomerDemands();
   for (size_t customer_id = 0; customer_id < original_instance.GetCustomerCount(); ++customer_id) {
     // LRC for customer assignment.
-    while (customer_demands[customer_id] > kAmountTolerance) {
+    while (customer_demands[customer_id] > kAmountTolerance_) {
       const std::vector<int>& facilities_by_current_cost = GetSortedFacilitiesByCostForCustomer(*constructive_solution, customer_id);
       if (facilities_by_current_cost.empty()) {
         // Not feasible to assign this customer, but we should have enough slack to handle this.
@@ -118,37 +113,6 @@ Solution* GraspMsCflpCiSolver::ConstructSolution(Instance* input) {
   ++current_grasp_iteration_;
   //std::cout << " 11111" << std::endl;
   return constructive_solution;
-}
-
-/**
- * @brief Postprocesses the constructed solution by exploring its neighborhood.
- *
- * @param solution The solution to postprocess.
- * @return A pointer to the improved solution after postprocessing.
- */
-Solution* GraspMsCflpCiSolver::Postprocess(Solution* solution) {
-  //return new MsCflpCiSolution(*dynamic_cast<MsCflpCiSolution*>(solution));
-  MsCflpCiSolution* current = dynamic_cast<MsCflpCiSolution*>(solution);
-  if (current == nullptr) {
-    throw std::invalid_argument("Solution is not of type MsCflpCiSolution.");
-  }
-  
-  size_t explorer_index = 0;
-  while (explorer_index < neighboorhod_explorers_.size()) {
-    MsCflpCiSolution* explored_solution = neighboorhod_explorers_[explorer_index]->Explore(current, kAmountTolerance, 
-                                                                                           kImprovementTolerance);
-    if (explored_solution != nullptr) {
-      delete current;
-      current = explored_solution;
-      explorer_index = 0; 
-    } else {
-      ++explorer_index; 
-    }
-  }
-
-  Solution* final_solution = new MsCflpCiSolution(*current);
-  delete current;
-  return final_solution;
 }
 
 /**
@@ -280,7 +244,7 @@ std::vector<int> GraspMsCflpCiSolver::GetSortedFacilitiesByCostForCustomer(const
   std::vector<std::pair<int, double>> facilities_with_costs;
   for (int facility_id = 0; facility_id < solution.GetInstance().GetFacilityCount(); ++facility_id) {
     if (solution.IsFacilityOpen(facility_id) 
-        && solution.GetResidualCapacity(facility_id) > kAmountTolerance
+        && solution.GetResidualCapacity(facility_id) > kAmountTolerance_
         && solution.CanAssignCustomerToFacility(customer_id, facility_id)) {
       facilities_with_costs.emplace_back(facility_id, solution.GetInstance().GetAssignmentCost(customer_id, facility_id));
     }

@@ -30,15 +30,20 @@ class GraspMsCflpCiSolver : public GraspAlgorythm {
  protected:
   void Preprocess(Instance* input) override;
   Solution* ConstructSolution(Instance* input) override;
-  Solution* Postprocess(Solution* solution) override;
+  virtual Solution* Postprocess(Solution* solution) override = 0;
   void UpdateBest(Solution* current, Solution*& best) override;
   bool StopCriterion() override;
- 
+  const std::vector<MsCflpCiNeighboorhodExplorer*>& GetNeighborhoodExplorers() const { return neighboorhod_explorers_;}
+  double GetAmountTolerance() const { return kAmountTolerance_;}
+  double GetImprovementTolerance() const { return kImprovementTolerance_;}
+  
  private:
   unsigned current_grasp_iteration_ = 0;
-  unsigned max_grasp_iterations_ = 100;
+  unsigned max_grasp_iterations_ = 1;
   unsigned lcr_cardinality_ = 1;
   std::vector<MsCflpCiNeighboorhodExplorer*> neighboorhod_explorers_;
+  static constexpr double kAmountTolerance_ = 1e-8;
+  static constexpr double kImprovementTolerance_ = 1e-8;
 
   unsigned FindSlackValue(const MsCflpCiInstance& instance) const;
   std::vector<int> GetSortedFacilitiesByScore(const MsCflpCiInstance& instance, const MsCflpCiSolution& solution) const;

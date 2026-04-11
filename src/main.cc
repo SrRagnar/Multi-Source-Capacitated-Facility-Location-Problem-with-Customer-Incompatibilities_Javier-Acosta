@@ -28,6 +28,8 @@
 #include "ms_cflp_ci_swap_explorer.h"
 #include "ms_cflp_ci_facility_swap_explorer.h"
 #include "ms_cflp_ci_incompatibilities_remover_explorer.h"
+#include "grasp_ms_cflp_ci_vnd_solver.h"
+#include "grasp_ms_cflp_ci_rvnd_solver.h"
 
 /**
  * @brief Extracts the file name from a path.
@@ -95,19 +97,28 @@ int main(int argc, char* argv[]) {
         MsCflpCiInstance* instance = loader.Load();
         auto start = std::chrono::high_resolution_clock::now();
         MsCflpCiGeneralSolver* solver = nullptr;
-        if (algorithm == "grasp") {
+        if (algorithm == "grasp-vnd") {
           std::vector<MsCflpCiNeighboorhodExplorer*> explorers = {
               new MsCflpCiShiftExplorer(),
               new MsCflpCiSwapExplorer(),
               new MsCflpCiFacilitiesSwapExplorer(),
               new MsCflpCIncompabilitiesRemoverExplorer()
           };
-          solver = new MsCflpCiGeneralSolver(new GraspMsCflpCiSolver(lrc_size, explorers));
+          solver = new MsCflpCiGeneralSolver(new GraspMsCflpCiVndSolver(lrc_size, explorers));
+        } else if (algorithm == "grasp-rvnd") {
+          std::vector<MsCflpCiNeighboorhodExplorer*> explorers = {
+              new MsCflpCiShiftExplorer(),
+              new MsCflpCiSwapExplorer(),
+              new MsCflpCiFacilitiesSwapExplorer(),
+              new MsCflpCIncompabilitiesRemoverExplorer()
+          };
+          solver = new MsCflpCiGeneralSolver(new GraspMsCflpCiRvndSolver(lrc_size, explorers));
+        
         } else if (algorithm == "greedy") {
           solver = new MsCflpCiGeneralSolver(new GreedyMsCflpCiSolver());
         } else {
           delete instance;
-          throw std::invalid_argument("Unknown algorithm: " + algorithm + " (use 'grasp' or 'greedy')");
+          throw std::invalid_argument("Unknown algorithm: " + algorithm + " (use 'grasp-[vnd|rvnd]' or 'greedy')");
         }
         MsCflpCiSolution* solution = solver->SolveMsCflpCiInstance(instance);
         auto end = std::chrono::high_resolution_clock::now();
