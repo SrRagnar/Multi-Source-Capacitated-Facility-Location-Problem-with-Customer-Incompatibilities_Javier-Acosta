@@ -26,3 +26,59 @@ wlp03.dzn       5       1       88        46210.00    33860.00    80070.00    0 
 wlp03.dzn       10      1       82        43950.00    33304.00    77254.00    0         280.195932  
 
 # 1 iter
+
+
+
+
+
+
+
+
+
+
+
+
+# 300 iter:
+
+javier@javier-VirtualBox:~/DAA/Multi-Source-Capacitated-Facility-Location-Problem-with-Customer-Incompatibilities_Javier-Acosta$ ./practice5_DAA inputs/wlp01.dzn grasp-rvnd ; ./practice5_DAA inputs/wlp01.dzn grasp-vnd
+Instancia       |LRC|   Ejec.   |J_open|  C. Fijo     C. Asig.    C. Total    Incomp.   CPU_Time    
+----------------------------------------------------------------------------------------------------
+wlp01.dzn       5       1       29        16360.00    14027.00    30387.00    0         38092.254878
+----------------------------------------------------------------------------------------------------
+wlp01.dzn       10      1       27        15120.00    15522.00    30642.00    0         543.320750  
+Instancia       |LRC|   Ejec.   |J_open|  C. Fijo     C. Asig.    C. Total    Incomp.   CPU_Time    
+----------------------------------------------------------------------------------------------------
+wlp01.dzn       5       1       28        15410.00    16192.00    31602.00    0         90.196440   
+----------------------------------------------------------------------------------------------------
+wlp01.dzn       10      1       28        15650.00    16101.00    31751.00    0         98.516835   
+
+
+
+# 10 iter:
+javier@javier-VirtualBox:~/DAA/Multi-Source-Capacitated-Facility-Location-Problem-with-Customer-Incompatibilities_Javier-Acosta$ ./practice5_DAA inputs/wlp02.dzn grasp-rvnd ; ./practice5_DAA inputs/wlp02.dzn grasp-vnd
+Instancia       |LRC|   Ejec.   |J_open|  C. Fijo     C. Asig.    C. Total    Incomp.   CPU_Time    
+----------------------------------------------------------------------------------------------------
+wlp02.dzn       5       1       65        36470.00    23974.00    60444.00    0         410.199763  
+----------------------------------------------------------------------------------------------------
+wlp02.dzn       10      1       64        35910.00    24325.00    60235.00    0         478.549659  
+Instancia       |LRC|   Ejec.   |J_open|  C. Fijo     C. Asig.    C. Total    Incomp.   CPU_Time    
+----------------------------------------------------------------------------------------------------
+wlp02.dzn       5       1       62        34550.00    26313.00    60863.00    0         88.657347   
+----------------------------------------------------------------------------------------------------
+wlp02.dzn       10      1       63        36620.00    25116.00    61736.00    0         111.161332  
+
+# 1 iter:
+javier@javier-VirtualBox:~/DAA/Multi-Source-Capacitated-Facility-Location-Problem-with-Customer-Incompatibilities_Javier-Acosta$ ./practice5_DAA inputs/wlp03.dzn grasp-rvnd ; ./practice5_DAA inputs/wlp03.dzn grasp-vnd
+Instancia       |LRC|   Ejec.   |J_open|  C. Fijo     C. Asig.    C. Total    Incomp.   CPU_Time    
+----------------------------------------------------------------------------------------------------
+wlp03.dzn       5       1       91        48040.00    25128.00    73168.00    0         158.832353  
+----------------------------------------------------------------------------------------------------
+wlp03.dzn       10      1       92        48310.00    26345.00    74655.00    0         174.267355  
+Instancia       |LRC|   Ejec.   |J_open|  C. Fijo     C. Asig.    C. Total    Incomp.   CPU_Time    
+----------------------------------------------------------------------------------------------------
+wlp03.dzn       5       1       89        47020.00    29586.00    76606.00    0         25.994000   
+----------------------------------------------------------------------------------------------------
+wlp03.dzn       10      1       84        45570.00    29090.00    74660.00    0         30.537310   
+
+
+

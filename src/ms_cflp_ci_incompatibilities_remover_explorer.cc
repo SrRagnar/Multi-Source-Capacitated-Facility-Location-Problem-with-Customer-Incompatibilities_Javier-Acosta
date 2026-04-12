@@ -42,6 +42,7 @@ MsCflpCiSolution* MsCflpCIncompabilitiesRemoverExplorer::Explore(const MsCflpCiS
           if (!ApplyMoveCustomer(*new_solution, customer_id, source_facility, target_facility, amount)) {
             delete new_solution;
             continue;
+            std::cerr << "ERROR: Incompabilities remove move cant be applied\n";
           }
           //std::cout << "Imcompabilties remove move. " << delta << std::endl;
           return new_solution;

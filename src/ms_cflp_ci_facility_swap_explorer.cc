@@ -55,6 +55,7 @@ MsCflpCiSolution* MsCflpCiFacilitiesSwapExplorer::Explore(const MsCflpCiSolution
     std::cerr << "Error: failed to apply the best facilities swap move found." << std::endl;
     return nullptr;
   }
+  //std::cout << "Facility swap move: " << best_delta << std::endl;
   return best_solution;
 }
 
