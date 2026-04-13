@@ -101,7 +101,7 @@ bool MsCflpCiSwapExplorer::CanSwapCustomersBetweenFacilities(const MsCflpCiSolut
   if (!solution.IsCustomerFullySatisfied(customer_a) || !solution.IsCustomerFullySatisfied(customer_b)) {
     return false;
   }
-  const std::vector<std::vector<int>> facilities_of = solution.GetFacilitiesOf();
+  const std::vector<std::vector<int>>& facilities_of = solution.GetFacilitiesOf();
   if (facilities_of[customer_a].size() != 1 || facilities_of[customer_b].size() != 1) {
     return false;
   }

@@ -39,8 +39,7 @@ Solution* GraspMsCflpCiRvndSolver::Postprocess(Solution* solution) {
   while (!active_explorers.empty()) {
     const size_t random_position = static_cast<size_t>(std::rand()) % active_explorers.size();
     const size_t explorer_index = active_explorers[random_position];
-    MsCflpCiSolution* explored_solution =
-        explorers[explorer_index]->Explore(current, GetAmountTolerance(), GetImprovementTolerance());
+    MsCflpCiSolution* explored_solution = explorers[explorer_index]->Explore(current, GetAmountTolerance(), GetImprovementTolerance());
 
     if (explored_solution != nullptr) {
       delete current;

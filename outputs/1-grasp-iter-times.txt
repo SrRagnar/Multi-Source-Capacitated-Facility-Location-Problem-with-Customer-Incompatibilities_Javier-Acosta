@@ -1,0 +1,38 @@
+shini@Javilongo:~/Multi-Source-Capacitated-Facility-Location-Problem-with-Customer-Incompatibilities_Javier-Acosta$ ./practice5_DAA inputs/wlp01.dzn grasp-rvnd ; echo ; ./practice5_DAA inputs/wlp01.dzn grasp-vnd
+Instancia       |LRC|   Ejec.   |J_open|  C. Fijo     C. Asig.    C. Total    Incomp.   CPU_Time    
+----------------------------------------------------------------------------------------------------
+wlp01.dzn       10      1       29        15380.00    18041.00    33421.00    0         0.154497    
+----------------------------------------------------------------------------------------------------
+wlp01.dzn       20      1       29        15350.00    17584.00    32934.00    0         0.150619    
+
+Instancia       |LRC|   Ejec.   |J_open|  C. Fijo     C. Asig.    C. Total    Incomp.   CPU_Time    
+----------------------------------------------------------------------------------------------------
+wlp01.dzn       10      1       29        16530.00    20315.00    36845.00    0         0.080879    
+----------------------------------------------------------------------------------------------------
+wlp01.dzn       20      1       27        15470.00    15868.00    31338.00    0         0.135988    
+
+shini@Javilongo:~/Multi-Source-Capacitated-Facility-Location-Problem-with-Customer-Incompatibilities_Javier-Acosta$ ./practice5_DAA inputs/wlp02.dzn grasp-rvnd ; echo ; ./practice5_DAA inputs/wlp02.dzn grasp-vnd
+Instancia       |LRC|   Ejec.   |J_open|  C. Fijo     C. Asig.    C. Total    Incomp.   CPU_Time    
+----------------------------------------------------------------------------------------------------
+wlp02.dzn       10      1       67        37690.00    23703.00    61393.00    0         2.232797    
+----------------------------------------------------------------------------------------------------
+wlp02.dzn       20      1       64        36500.00    25381.00    61881.00    0         2.636235    
+
+Instancia       |LRC|   Ejec.   |J_open|  C. Fijo     C. Asig.    C. Total    Incomp.   CPU_Time    
+----------------------------------------------------------------------------------------------------
+wlp02.dzn       10      1       63        35280.00    32712.00    67992.00    0         1.021887    
+----------------------------------------------------------------------------------------------------
+wlp02.dzn       20      1       57        35010.00    28191.00    63201.00    0         1.102575    
+
+shini@Javilongo:~/Multi-Source-Capacitated-Facility-Location-Problem-with-Customer-Incompatibilities_Javier-Acosta$ ./practice5_DAA inputs/wlp01.dzn grasp-rvnd ; echo ; ./practice5_DAA inputs/wlp03.dzn grasp-vnd
+Instancia       |LRC|   Ejec.   |J_open|  C. Fijo     C. Asig.    C. Total    Incomp.   CPU_Time    
+----------------------------------------------------------------------------------------------------
+wlp01.dzn       10      1       31        16300.00    16633.00    32933.00    0         0.151761    
+----------------------------------------------------------------------------------------------------
+wlp01.dzn       20      1       30        16380.00    14719.00    31099.00    0         0.166127    
+
+Instancia       |LRC|   Ejec.   |J_open|  C. Fijo     C. Asig.    C. Total    Incomp.   CPU_Time    
+----------------------------------------------------------------------------------------------------
+wlp03.dzn       10      1       88        47150.00    28415.00    75565.00    0         3.223225    
+----------------------------------------------------------------------------------------------------
+wlp03.dzn       20      1       87        48060.00    30430.00    78490.00    0         3.727990    

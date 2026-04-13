@@ -86,7 +86,7 @@ int main(int argc, char* argv[]) {
     const std::string instance_path = argv[1];
     const std::string algorithm = argv[2];
     const std::string instance_name = GetInstanceName(instance_path);
-    const std::vector<int> lrc_sizes = {5, 10};
+    const std::vector<int> lrc_sizes = {5, 10, 12, 15, 20, 25};
     const int executions = 1;
 
     PrintTableHeader();

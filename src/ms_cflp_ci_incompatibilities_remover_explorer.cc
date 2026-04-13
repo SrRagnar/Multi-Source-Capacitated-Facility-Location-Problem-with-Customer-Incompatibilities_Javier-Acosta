@@ -16,6 +16,17 @@
 
 #include "ms_cflp_ci_incompatibilities_remover_explorer.h"
 
+/**
+ * @brief Explores the incompatibility-removal neighborhood.
+ *
+ * The method first moves a blocking customer and then tries to move
+ * unlocked incompatible customers to the released facility if this improves the cost.
+ *
+ * @param solution Current solution.
+ * @param amount_tol Numerical tolerance for flow amounts.
+ * @param improvement_tol Numerical tolerance for improvements.
+ * @return A new improved solution, or nullptr if no improving move is found.
+ */
 MsCflpCiSolution* MsCflpCIncompabilitiesRemoverExplorer::Explore(const MsCflpCiSolution* solution,
                                                                  double amount_tol,
                                                                  double improvement_tol) const {
@@ -30,8 +41,7 @@ MsCflpCiSolution* MsCflpCIncompabilitiesRemoverExplorer::Explore(const MsCflpCiS
       if (amount <= amount_tol) {
         continue;
       }
-      const std::vector<int> target_facilities = GetTargetFacilitiesSortedByAssignmentCost(*solution, customer_id,
-                                                                                   source_facility, amount, amount_tol);
+      const std::vector<int> target_facilities = GetTargetFacilitiesSortedByAssignmentCost(*solution, customer_id, source_facility, amount, amount_tol);
       for (int target_facility : target_facilities) {
         if (!CanMoveCustomerToFacility(*solution, customer_id, source_facility, target_facility, amount, amount_tol)) {
           continue;
@@ -41,9 +51,10 @@ MsCflpCiSolution* MsCflpCIncompabilitiesRemoverExplorer::Explore(const MsCflpCiS
           MsCflpCiSolution* new_solution = new MsCflpCiSolution(*solution);
           if (!ApplyMoveCustomer(*new_solution, customer_id, source_facility, target_facility, amount)) {
             delete new_solution;
-            continue;
             std::cerr << "ERROR: Incompabilities remove move cant be applied\n";
+            continue;
           }
+          TryReassignUnlockedCustomers(*new_solution, customer_id, source_facility, amount_tol, improvement_tol);
           //std::cout << "Imcompabilties remove move. " << delta << std::endl;
           return new_solution;
         }
@@ -54,6 +65,13 @@ MsCflpCiSolution* MsCflpCIncompabilitiesRemoverExplorer::Explore(const MsCflpCiS
   return nullptr;
 }
 
+/**
+ * @brief Computes the transport cost currently induced by one facility.
+ *
+ * @param solution Current solution.
+ * @param facility_id Facility identifier.
+ * @return Transport cost of the facility.
+ */
 double MsCflpCIncompabilitiesRemoverExplorer::GetFacilityTransportCost(
     const MsCflpCiSolution& solution, int facility_id) const {
   double transport_cost = 0.0;
@@ -69,11 +87,18 @@ double MsCflpCIncompabilitiesRemoverExplorer::GetFacilityTransportCost(
   return transport_cost;
 }
 
+/**
+ * @brief Counts how many customers would be unblocked by removing one customer.
+ *
+ * @param solution Current solution.
+ * @param customer_id Customer to remove.
+ * @param facility_id Facility from which the customer is removed.
+ * @return Number of newly unblocked customers.
+ */
 int MsCflpCIncompabilitiesRemoverExplorer::CountCustomersUnblockedByRemovingCustomer(
     const MsCflpCiSolution& solution, int customer_id, int facility_id) const {
   int unblocked_customers = 0;
-  const std::vector<int>& incompatible_customers =
-      solution.GetInstance().GetIncompatibleCustomers(customer_id);
+  const std::vector<int>& incompatible_customers = solution.GetInstance().GetIncompatibleCustomers(customer_id);
 
   for (int incompatible_customer : incompatible_customers) {
     if (solution.GetIncompatibilityCounter()[incompatible_customer][facility_id] == 1) {
@@ -84,6 +109,17 @@ int MsCflpCIncompabilitiesRemoverExplorer::CountCustomersUnblockedByRemovingCust
   return unblocked_customers;
 }
 
+/**
+ * @brief Checks whether a customer can be moved to a target facility.
+ *
+ * @param solution Current solution.
+ * @param customer_id Customer identifier.
+ * @param source_facility Source facility identifier.
+ * @param target_facility Target facility identifier.
+ * @param amount Amount to move.
+ * @param amount_tol Numerical tolerance for flow amounts.
+ * @return True if the move is feasible, false otherwise.
+ */
 bool MsCflpCIncompabilitiesRemoverExplorer::CanMoveCustomerToFacility(
     const MsCflpCiSolution& solution, int customer_id, int source_facility, int target_facility,
     double amount, double amount_tol) const {
@@ -104,6 +140,16 @@ bool MsCflpCIncompabilitiesRemoverExplorer::CanMoveCustomerToFacility(
   return solution.GetIncompatibilityCounter()[customer_id][target_facility] == 0;
 }
 
+/**
+ * @brief Evaluates the delta of moving one customer to another facility.
+ *
+ * @param solution Current solution.
+ * @param customer_id Customer identifier.
+ * @param source_facility Source facility identifier.
+ * @param target_facility Target facility identifier.
+ * @param amount Amount to move.
+ * @return Objective delta of the move.
+ */
 double MsCflpCIncompabilitiesRemoverExplorer::EvaluateMoveCustomerDelta(
     const MsCflpCiSolution& solution, int customer_id, int source_facility,
     int target_facility, double amount) const {
@@ -114,7 +160,6 @@ double MsCflpCIncompabilitiesRemoverExplorer::EvaluateMoveCustomerDelta(
   if (!solution.IsFacilityOpen(target_facility)) {
     delta += solution.GetInstance().GetFacilityOpeningCost(target_facility);
   }
-
   const double source_amount =
       solution.GetCustomerFacilityFraction(customer_id, source_facility) *
       solution.GetInstance().GetCustomerDemand(customer_id);
@@ -126,6 +171,16 @@ double MsCflpCIncompabilitiesRemoverExplorer::EvaluateMoveCustomerDelta(
   return delta;
 }
 
+/**
+ * @brief Applies a customer move between two facilities.
+ *
+ * @param solution Solution to modify.
+ * @param customer_id Customer identifier.
+ * @param source_facility Source facility identifier.
+ * @param target_facility Target facility identifier.
+ * @param amount Amount to move.
+ * @return True if the move is successfully applied, false otherwise.
+ */
 bool MsCflpCIncompabilitiesRemoverExplorer::ApplyMoveCustomer(
     MsCflpCiSolution& solution, int customer_id, int source_facility,
     int target_facility, double amount) const {
@@ -149,6 +204,84 @@ bool MsCflpCIncompabilitiesRemoverExplorer::ApplyMoveCustomer(
   return true;
 }
 
+/**
+ * @brief Tries to reassign unlocked incompatible customers to the released facility.
+ *
+ * @param solution Solution to modify.
+ * @param moved_blocker_customer Customer that has been removed from the released facility.
+ * @param released_facility Facility that has been released.
+ * @param amount_tol Numerical tolerance for flow amounts.
+ * @param improvement_tol Numerical tolerance for improvements.
+ * @return True if at least one reassignment is performed, false otherwise.
+ */
+bool MsCflpCIncompabilitiesRemoverExplorer::TryReassignUnlockedCustomers(MsCflpCiSolution& solution, int moved_blocker_customer, int released_facility,
+                                                                         double amount_tol, double improvement_tol) const {
+  bool moved_any_customer = false;
+  const std::vector<int>& incompatible_customers = solution.GetInstance().GetIncompatibleCustomers(moved_blocker_customer);
+  for (int incompatible_customer : incompatible_customers) {
+    if (solution.GetIncompatibilityCounter()[incompatible_customer][released_facility] != 0) {
+      continue;
+    }
+    if (TryMoveCustomerToReleasedFacility(solution, incompatible_customer, released_facility,
+                                          amount_tol, improvement_tol)) {
+      moved_any_customer = true;
+    }
+  }
+
+  return moved_any_customer;
+}
+
+/**
+ * @brief Tries to move one customer to the released facility if the move improves the cost.
+ *
+ * @param solution Solution to modify.
+ * @param customer_id Customer identifier.
+ * @param target_facility Released facility identifier.
+ * @param amount_tol Numerical tolerance for flow amounts.
+ * @param improvement_tol Numerical tolerance for improvements.
+ * @return True if the move is applied, false otherwise.
+ */
+bool MsCflpCIncompabilitiesRemoverExplorer::TryMoveCustomerToReleasedFacility(
+    MsCflpCiSolution& solution, int customer_id, int target_facility,
+    double amount_tol, double improvement_tol) const {
+  const std::vector<std::vector<int>>& facilities_of = solution.GetFacilitiesOf();
+  int best_source_facility = -1;
+  double best_amount = 0.0;
+  double best_delta = 0.0;
+  for (int source_facility : facilities_of[customer_id]) {
+    if (source_facility == target_facility) {
+      continue;
+    }
+    const double amount =
+        solution.GetCustomerFacilityFraction(customer_id, source_facility) *
+        solution.GetInstance().GetCustomerDemand(customer_id);
+    if (amount <= amount_tol) {
+      continue;
+    }
+    if (!CanMoveCustomerToFacility(solution, customer_id, source_facility, target_facility,
+                                   amount, amount_tol)) {
+      continue;
+    }
+    const double delta = EvaluateMoveCustomerDelta(solution, customer_id, source_facility, target_facility, amount);
+    if (delta < best_delta - improvement_tol) {
+      best_source_facility = source_facility;
+      best_amount = amount;
+      best_delta = delta;
+    }
+  }
+
+  if (best_source_facility == -1) {
+    return false;
+  }
+  return ApplyMoveCustomer(solution, customer_id, best_source_facility, target_facility, best_amount);
+}
+
+/**
+ * @brief Sorts open facilities by decreasing transport cost.
+ *
+ * @param solution Current solution.
+ * @return Open facilities sorted by transport cost.
+ */
 std::vector<int> MsCflpCIncompabilitiesRemoverExplorer::GetOpenFacilitiesSortedByTransportCost(
     const MsCflpCiSolution& solution) const {
   std::vector<std::pair<int, double>> facilities_with_costs;
@@ -178,6 +311,14 @@ std::vector<int> MsCflpCIncompabilitiesRemoverExplorer::GetOpenFacilitiesSortedB
   return facilities;
 }
 
+/**
+ * @brief Sorts customers by blocking score inside one facility.
+ *
+ * @param solution Current solution.
+ * @param facility_id Facility identifier.
+ * @param amount_tol Numerical tolerance for flow amounts.
+ * @return Customers sorted by blocking score.
+ */
 std::vector<int> MsCflpCIncompabilitiesRemoverExplorer::GetCustomersSortedByBlockingScore(
     const MsCflpCiSolution& solution, int facility_id, double amount_tol) const {
   std::vector<std::pair<int, std::pair<int, double>>> customers_with_scores;
@@ -214,6 +355,16 @@ std::vector<int> MsCflpCIncompabilitiesRemoverExplorer::GetCustomersSortedByBloc
   return customers_sorted;
 }
 
+/**
+ * @brief Sorts feasible target facilities by increasing assignment cost.
+ *
+ * @param solution Current solution.
+ * @param customer_id Customer identifier.
+ * @param source_facility Source facility identifier.
+ * @param amount Amount to move.
+ * @param amount_tol Numerical tolerance for flow amounts.
+ * @return Target facilities sorted by assignment cost.
+ */
 std::vector<int> MsCflpCIncompabilitiesRemoverExplorer::GetTargetFacilitiesSortedByAssignmentCost(
     const MsCflpCiSolution& solution, int customer_id, int source_facility, double amount,
     double amount_tol) const {

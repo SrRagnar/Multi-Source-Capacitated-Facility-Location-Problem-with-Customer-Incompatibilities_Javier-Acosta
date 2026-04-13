@@ -38,6 +38,9 @@ class MsCflpCIncompabilitiesRemoverExplorer : public MsCflpCiNeighboorhodExplore
   std::vector<int> GetTargetFacilitiesSortedByAssignmentCost(const MsCflpCiSolution& solution, int customer_id,
                                                              int source_facility, double amount,
                                                              double amount_tol) const;
+  bool TryReassignUnlockedCustomers(MsCflpCiSolution& solution, int moved_blocker_customer, int released_facility,
+                                   double amount_tol, double improvement_tol) const;
+  bool TryMoveCustomerToReleasedFacility(MsCflpCiSolution& solution, int customer_id, int target_facility, double amount_tol, double improvement_tol) const;
 };
 
 #endif

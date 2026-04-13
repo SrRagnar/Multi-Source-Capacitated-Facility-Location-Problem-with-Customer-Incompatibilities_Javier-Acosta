@@ -28,10 +28,10 @@ MsCflpCiSolution* MsCflpCiShiftExplorer::Explore(const MsCflpCiSolution* solutio
   double best_delta = no_improving_delta;
 
   for (int customer_id = 0; customer_id < customer_count; ++customer_id) {
-    const std::vector<int> source_facilities = solution->GetFacilitiesOf()[customer_id];
+    const std::vector<std::vector<int>>& facilities_of = solution->GetFacilitiesOf();
     const std::vector<int> target_facilities = GetSortedFacilitiesByCostForCustomer(*solution, customer_id, 
                                                                                     amount_tol, improvement_tol);
-    for (int source_facility : source_facilities) {
+    for (int source_facility : facilities_of[customer_id]) {
       const double assigned_amount =
           solution->GetCustomerFacilityFraction(customer_id, source_facility) *
           solution->GetInstance().GetCustomerDemand(customer_id);
