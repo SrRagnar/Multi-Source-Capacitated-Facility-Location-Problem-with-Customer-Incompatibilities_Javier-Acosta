@@ -72,7 +72,7 @@ MsCflpCiSolution* MsCflpCiShiftExplorer::Explore(const MsCflpCiSolution* solutio
   if (!ShiftFlow(*best_solution, best_customer_id, best_source_facility, best_target_facility, best_shift_amount,
                   amount_tol, improvement_tol)) {
     delete best_solution;
-    std::cerr << "ERROR: Failed to apply the best swap move found." << std::endl;
+    std::cerr << "ERROR: Failed to apply the best shift move found." << std::endl;
     return nullptr;
   }
 
