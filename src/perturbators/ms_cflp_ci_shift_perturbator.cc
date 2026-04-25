@@ -17,7 +17,7 @@
 MsCflpCiSolution* MsCflpCiShiftPerturbator::Perturbate(const MsCflpCiSolution* solution, double amount_tol, double improvement_tol) const {
   const int customers_amount = solution->GetCustomerCount();
   const int facilities_amount = solution->GetFacilityCount();
-  const unsigned max_iter = customers_amount * facilities_amount;
+  const unsigned max_iter = customers_amount * facilities_amount * 100;
   if (customers_amount <= 0 || facilities_amount <= 1) {
     return new MsCflpCiSolution(*solution);
   }

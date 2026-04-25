@@ -1,6 +1,18 @@
+// University of La Laguna
+// School of Engineering and Technology
+// Bachelor's Degree in Computer Engineering
+// Subject: Design and Analysis of Algorithms
+// Course: 3rd
+// Practice 6: Multi-Source Capacitated Facility Location Problem with Customer Incompatibilities
+// Author: Javier Acosta Portocarrero
+// Date: 25/04/2026
+// File grasp-ms-cflp-ci-gvns_rl_solver.cc: implementation file.
+// Contains the implementation of the GraspMsCflpCiGvnsRlSolver class.
+
 #include <stdexcept>
 #include <vector>
 #include <cstdlib>
+#include <iostream>
 
 #include "grasp_ms_cflp_ci_gvns_rl_solver.h"
 
@@ -20,8 +32,10 @@ Solution* GraspMsCflpCiGvnsRl::Postprocess(Solution* solution) {
   }
  
   size_t perturbator_index = 0;
+  //unsigned iter = 0;
   while (perturbator_index < perturbators_.size()) {
     /// Generate a perturbed solution (may return nullptr if no move found)
+    //std::cout << "GVNS iteration: " << iter++ << std::endl;
     MsCflpCiSolution* new_solution = perturbators_[perturbator_index++]->
         Perturbate(current_solution, GetAmountTolerance(), GetImprovementTolerance());
     if (new_solution == nullptr) {
@@ -63,7 +77,6 @@ MsCflpCiSolution* GraspMsCflpCiGvnsRl::VndWithReinforcementLearning(MsCflpCiSolu
 
   while (iter_without_improvement < max_rl_vnd_iter_without_improvement &&
          total_iter < max_rl_vnd_iter_) {
-
     /// Epsilon-greedy selection
     size_t current_neighborhood_index = 0;
     const double random_value = static_cast<double>(std::rand()) / RAND_MAX;
@@ -73,9 +86,10 @@ MsCflpCiSolution* GraspMsCflpCiGvnsRl::VndWithReinforcementLearning(MsCflpCiSolu
       current_neighborhood_index = current_best_neighborhood_index;
     }
     const double previous_cost = current_solution->GetTotalCost();
-
+    //unsigned iter = 0;
     /// Local search
     while (true) {
+      //std::cout << "iter: " << iter++ << ", neighborhood: " << current_neighborhood_index << std::endl;
       MsCflpCiSolution* tmp_solution = explorers[current_neighborhood_index]->Explore(
           current_solution, GetAmountTolerance(), GetImprovementTolerance());
       if (tmp_solution == nullptr) {
@@ -85,7 +99,7 @@ MsCflpCiSolution* GraspMsCflpCiGvnsRl::VndWithReinforcementLearning(MsCflpCiSolu
       current_solution = tmp_solution;
     }
     /// Compute reward based on improvement
-    const double reward = CalculateReward(previous_cost, current_solution);
+    const double reward = CalculateProportionalReward(previous_cost, current_solution);
     if (reward == 0.0) {
       ++iter_without_improvement;
     } else {
@@ -116,10 +130,26 @@ MsCflpCiSolution* GraspMsCflpCiGvnsRl::VndWithReinforcementLearning(MsCflpCiSolu
  * @param new_solution Resulting solution.
  * @return Reward value (0 or 1).
  */
-double GraspMsCflpCiGvnsRl::CalculateReward(double previous_cost, MsCflpCiSolution* new_solution) const {
+double GraspMsCflpCiGvnsRl::CalculateBinaryReward(double previous_cost, MsCflpCiSolution* new_solution) const {
   if (new_solution == nullptr ||
       new_solution->GetTotalCost() >= previous_cost - GetImprovementTolerance()) {
     return 0.0;
   } 
   return 1.0;
+}
+
+/**
+ * @brief Computes proportional reward for RL policy.
+ *
+ * Proportional reward: (previous_cost - new_cost) / previous_cost.
+ *
+ * @param previous_cost Cost before applying neighborhood.
+ * @param new_solution Resulting solution.
+ * @return Reward value in [0, 1].
+ */
+double GraspMsCflpCiGvnsRl::CalculateProportionalReward(double previous_cost, MsCflpCiSolution* new_solution) const {
+  if (new_solution == nullptr) {
+    return 0.0;
+  }
+  return (previous_cost  - new_solution->GetTotalCost()) / previous_cost;
 }
