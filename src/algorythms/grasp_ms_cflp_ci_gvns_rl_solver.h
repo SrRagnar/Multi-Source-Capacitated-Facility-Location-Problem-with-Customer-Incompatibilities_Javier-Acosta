@@ -13,7 +13,7 @@
 #define GRAASP_MS_CFLP_CI_GVNS_RL_SOLVER_H_
 
 #include "grasp_ms_cflp_ci_solver.h"
-#include "ms_cflp_ci_perturbation_strategy.h"
+#include "../perturbators/ms_cflp_ci_perturbation_strategy.h"
 
 class GraspMsCflpCiGvnsRl : public GraspMsCflpCiSolver {
  public:
@@ -36,7 +36,7 @@ class GraspMsCflpCiGvnsRl : public GraspMsCflpCiSolver {
   const double initial_confidence_ = 0.5;
 
   MsCflpCiSolution* VndWithReinforcementLearning(MsCflpCiSolution* Solution) const;
-  double CalculateReward(MsCflpCiSolution* previus_solution, MsCflpCiSolution* new_solution) const;
+  double CalculateReward(double previus_cost, MsCflpCiSolution* new_solution) const;
 };
 
 #endif

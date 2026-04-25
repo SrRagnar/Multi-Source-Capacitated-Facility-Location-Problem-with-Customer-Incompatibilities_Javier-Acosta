@@ -13,8 +13,8 @@
 #define MS_CFLP_CI_SOLVER_GENERAL_H_
 
 #include "algorythm.h"
-#include "ms_cflp_ci_instance.h"
-#include "ms_cflp_ci_solution.h"
+#include "../instances/ms_cflp_ci_instance.h"
+#include "../solutions/ms_cflp_ci_solution.h"
 
 class MsCflpCiGeneralSolver {
  public:

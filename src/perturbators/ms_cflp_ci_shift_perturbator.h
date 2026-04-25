@@ -13,15 +13,15 @@
 #ifndef MS_CFLP_CI_SHIFT_PERTURBATOR_H_
 #define MS_CFLP_CI_SHIFT_PERTURBATOR_H_
 
-#include "ms_cflp_ci_solution.h"
+#include "../solutions/ms_cflp_ci_solution.h"
 #include "ms_cflp_ci_perturbation_strategy.h"
 
-class MsCflpCiShiftPerturbator : MsCflpCiPerturbationStrategy  {
+class MsCflpCiShiftPerturbator : public MsCflpCiPerturbationStrategy  {
  public:
-  ~MsCflpCiShiftPerturbator() = default;
+  MsCflpCiShiftPerturbator() = default;
+  ~MsCflpCiShiftPerturbator() override = default;
 
   MsCflpCiSolution* Perturbate(const MsCflpCiSolution* solution, double amount_tol, double improvement_tol) const override;
-  
  private:
   bool CanShiftFlow(const MsCflpCiSolution& solution, 
                     int customer_id, int source_facility, int target_facility, double amount,

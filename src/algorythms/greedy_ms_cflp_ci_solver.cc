@@ -12,8 +12,8 @@
 #include <stdexcept>
 
 #include "greedy_ms_cflp_ci_solver.h"
-#include "ms_cflp_ci_solution.h"
-#include "ms_cflp_ci_instance.h"
+#include "../solutions/ms_cflp_ci_solution.h"
+#include "../instances/ms_cflp_ci_instance.h"
 
 Solution* GreedyMsCflpCiSolver::Solve(Instance* input) {
   MsCflpCiInstance* instance = dynamic_cast<MsCflpCiInstance*>(input);

@@ -15,7 +15,7 @@
 
 #include <vector>
 
-#include "ms_cflp_ci_instance.h"
+#include "../instances/ms_cflp_ci_instance.h"
 #include "solution.h"
 
 /**

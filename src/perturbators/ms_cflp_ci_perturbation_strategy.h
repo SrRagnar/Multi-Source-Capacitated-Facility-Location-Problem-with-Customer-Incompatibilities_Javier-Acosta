@@ -13,7 +13,7 @@
 #ifndef MS_CFLP_CI_PERTURBATION_STRATEGY_H_
 #define MS_CFLP_CI_PERTURBATION_STRATEGY_H_
 
-#include "ms_cflp_ci_solution.h"
+#include "../solutions/ms_cflp_ci_solution.h"
 
 class MsCflpCiPerturbationStrategy {
  public:

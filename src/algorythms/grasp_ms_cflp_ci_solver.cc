@@ -17,8 +17,8 @@
 #include <cmath>
 
 #include "grasp_ms_cflp_ci_solver.h"
-#include "ms_cflp_ci_solution.h"
-#include "ms_cflp_ci_instance.h"
+#include "../solutions/ms_cflp_ci_solution.h"
+#include "../instances/ms_cflp_ci_instance.h"
 
 /**
  * @brief Preprocesses the input instance.

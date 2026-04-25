@@ -10,13 +10,12 @@
 // File ms_cflp_ci_solution.cc: implementation file.
 // Contains the implementation of the MsCflpCiSolution class.
 
-#include "ms_cflp_ci_solution.h"
-
 #include <iostream>
-
 #include <algorithm>
 #include <cmath>
 #include <stdexcept>
+
+#include "ms_cflp_ci_solution.h"
 
 namespace {
   constexpr double kAmountTolerance = 1e-8;

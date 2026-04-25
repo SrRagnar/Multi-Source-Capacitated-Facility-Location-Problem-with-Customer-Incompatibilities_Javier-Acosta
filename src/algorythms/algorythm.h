@@ -12,8 +12,8 @@
 #ifndef ALGORYTHM_H_
 #define ALGORYTHM_H_
 
-#include "instance.h"
-#include "solution.h"
+#include "../instances/instance.h"
+#include "../solutions/solution.h"
 
 /**
   * @class Algorythm

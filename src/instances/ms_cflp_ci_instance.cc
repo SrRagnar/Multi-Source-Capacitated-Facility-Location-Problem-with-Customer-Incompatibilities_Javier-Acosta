@@ -10,10 +10,10 @@
 // File ms_cflp_ci_instance.cc: implementation file.
 // Contains the implementation of the MsCflpCiInstance class.
 
-#include "ms_cflp_ci_instance.h"
-
 #include <algorithm>  // std::sort
 #include <stdexcept>
+
+#include "ms_cflp_ci_instance.h"
 
 /**
  * @brief Builds an instance from the essential input data.

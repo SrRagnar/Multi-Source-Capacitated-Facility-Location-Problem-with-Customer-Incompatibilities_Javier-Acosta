@@ -13,7 +13,7 @@
 #ifndef MS_CFLP_CI_NEIGHBOORHOOD_EXPLORER_H_
 #define MS_CFLP_CI_NEIGHBOORHOOD_EXPLORER_H_
 
-#include "ms_cflp_ci_solution.h"
+#include "../solutions/ms_cflp_ci_solution.h"
 
 class MsCflpCiNeighboorhodExplorer {
  public:

@@ -13,9 +13,9 @@
 #define GRAASP_MS_CFLP_CI_SOLVER_H_
 
 #include "grasp_algorythm.h"
-#include "ms_cflp_ci_instance.h"
-#include "ms_cflp_ci_solution.h"
-#include "ms_cflp_ci_neighboorhod_explorer.h"
+#include "../instances/ms_cflp_ci_instance.h"
+#include "../solutions/ms_cflp_ci_solution.h"
+#include "../explorers/ms_cflp_ci_neighboorhod_explorer.h"
 
 /**
  * @class GraspMsCflpCiSolver
@@ -39,7 +39,7 @@ class GraspMsCflpCiSolver : public GraspAlgorythm {
   
  private:
   unsigned current_grasp_iteration_ = 0;
-  unsigned max_grasp_iterations_ = 1000;
+  unsigned max_grasp_iterations_ = 1;
   unsigned lcr_cardinality_ = 1;
   std::vector<MsCflpCiNeighboorhodExplorer*> neighboorhod_explorers_;
   static constexpr double kAmountTolerance_ = 1e-8;

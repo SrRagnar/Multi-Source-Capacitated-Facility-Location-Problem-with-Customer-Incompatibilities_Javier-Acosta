@@ -17,19 +17,19 @@
 #include <string>
 #include <vector>
 
-#include "ms_cflp_ci_solution.h"
-#include "ms_cflp_ci_instance.h"
-#include "ms_cflp_ci_instance_csi_loader.h"
-#include "ms_cflp_ci_general_solver.h"
-#include "greedy_ms_cflp_ci_solver.h"
-#include "grasp_ms_cflp_ci_solver.h"
-#include "ms_cflp_ci_neighboorhod_explorer.h"
-#include "ms_cflp_ci_shift_explorer.h"
-#include "ms_cflp_ci_swap_explorer.h"
-#include "ms_cflp_ci_facility_swap_explorer.h"
-#include "ms_cflp_ci_incompatibilities_remover_explorer.h"
-#include "grasp_ms_cflp_ci_vnd_solver.h"
-#include "grasp_ms_cflp_ci_rvnd_solver.h"
+#include "solutions/ms_cflp_ci_solution.h"
+#include "instances/ms_cflp_ci_instance.h"
+#include "instances/ms_cflp_ci_instance_csi_loader.h"
+#include "algorythms/ms_cflp_ci_general_solver.h"
+#include "algorythms/greedy_ms_cflp_ci_solver.h"
+#include "algorythms/grasp_ms_cflp_ci_vnd_solver.h"
+#include "algorythms/grasp_ms_cflp_ci_rvnd_solver.h"
+#include "algorythms/grasp_ms_cflp_ci_gvns_rl_solver.h"
+#include "explorers/ms_cflp_ci_shift_explorer.h"
+#include "explorers/ms_cflp_ci_swap_explorer.h"
+#include "explorers/ms_cflp_ci_facility_swap_explorer.h"
+#include "explorers/ms_cflp_ci_incompatibilities_remover_explorer.h"
+#include "perturbators/ms_cflp_ci_shift_perturbator.h"
 
 /**
  * @brief Extracts the file name from a path.
@@ -113,7 +113,17 @@ int main(int argc, char* argv[]) {
               new MsCflpCIncompabilitiesRemoverExplorer()
           };
           solver = new MsCflpCiGeneralSolver(new GraspMsCflpCiRvndSolver(lrc_size, explorers));
-        
+        } else if (algorithm == "grasp-gvns-rl") {
+          std::vector<MsCflpCiNeighboorhodExplorer*> explorers = {
+              new MsCflpCiShiftExplorer(),
+              new MsCflpCiSwapExplorer(),
+              new MsCflpCiFacilitiesSwapExplorer(),
+              new MsCflpCIncompabilitiesRemoverExplorer()
+          };
+          std::vector<MsCflpCiPerturbationStrategy*> perturbators = {
+              new MsCflpCiShiftPerturbator()
+          };
+          solver = new MsCflpCiGeneralSolver(new GraspMsCflpCiGvnsRl(lrc_size, explorers, perturbators));
         } else if (algorithm == "greedy") {
           solver = new MsCflpCiGeneralSolver(new GreedyMsCflpCiSolver());
         } else {
