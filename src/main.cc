@@ -76,7 +76,7 @@ void PrintTableHeader() {
 int main(int argc, char* argv[]) {
   if (argc != 3) {
     std::cerr << "Usage: " << argv[0]
-              << " <instance_file.dzn> <grasp|greedy>" << std::endl;
+              << " <instance_file.dzn> <grasp-[vnd|rvnd|gvns-rl]|greedy>" << std::endl;
     return 1;
   }
 

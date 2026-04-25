@@ -28,7 +28,7 @@ class GraspMsCflpCiGvnsRl : public GraspMsCflpCiSolver {
  
  private:
   std::vector<MsCflpCiPerturbationStrategy*> perturbators_;
-  const unsigned max_rl_vnd_iter_ = 100;
+  const unsigned max_rl_vnd_iter_ = 1000;
   const unsigned max_rl_vnd_iter_without_improvement = 25;
   // Used for the epsilon-greedy policy used to decide to explote or explore.
   const double epsilon_ = 0.2;
