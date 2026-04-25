@@ -32,7 +32,7 @@ class GraspMsCflpCiSolver : public GraspAlgorythm {
   Solution* ConstructSolution(Instance* input) override;
   virtual Solution* Postprocess(Solution* solution) override = 0;
   void UpdateBest(Solution* current, Solution*& best) override;
-  bool StopCriterion() override;
+  virtual bool StopCriterion() override;
   const std::vector<MsCflpCiNeighboorhodExplorer*>& GetNeighborhoodExplorers() const { return neighboorhod_explorers_;}
   double GetAmountTolerance() const { return kAmountTolerance_;}
   double GetImprovementTolerance() const { return kImprovementTolerance_;}
