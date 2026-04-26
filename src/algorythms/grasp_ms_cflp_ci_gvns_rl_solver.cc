@@ -30,15 +30,19 @@ Solution* GraspMsCflpCiGvnsRl::Postprocess(Solution* solution) {
   if (current_solution == nullptr) {
     throw std::invalid_argument("Solution is not of type MsCflpCiSolution.");
   }
- 
-  size_t perturbator_index = 0;
-  //unsigned iter = 0;
-  while (perturbator_index < perturbators_.size()) {
-    /// Generate a perturbed solution (may return nullptr if no move found)
-    //std::cout << "GVNS iteration: " << iter++ << std::endl;
-    MsCflpCiSolution* new_solution = perturbators_[perturbator_index++]->
+  if (perturbators_.empty()) {
+    return current_solution;
+  }
+  unsigned iter = 0;
+  unsigned iter_without_improvement = 0;
+  while (iter < max_gvns_iter_ &&
+         iter_without_improvement < max_gvns_iter_without_improvement_) {
+    ++iter;
+    const size_t perturbator_index = std::rand() % perturbators_.size();
+    MsCflpCiSolution* new_solution = perturbators_[perturbator_index]->
         Perturbate(current_solution, GetAmountTolerance(), GetImprovementTolerance());
     if (new_solution == nullptr) {
+      ++iter_without_improvement;
       continue;
     }
     /// Apply VND with RL over the perturbed solution
@@ -48,10 +52,11 @@ Solution* GraspMsCflpCiGvnsRl::Postprocess(Solution* solution) {
         new_solution->GetTotalCost() < current_solution->GetTotalCost() - GetImprovementTolerance()) {
       delete current_solution;
       current_solution = new_solution;
-      perturbator_index = 0;
+      iter_without_improvement = 0;
       continue;
     }
     delete new_solution;
+    ++iter_without_improvement;
   }
 
   /// Return final solution without extra copy
@@ -68,14 +73,17 @@ Solution* GraspMsCflpCiGvnsRl::Postprocess(Solution* solution) {
  * @return Locally improved solution.
  */
 MsCflpCiSolution* GraspMsCflpCiGvnsRl::VndWithReinforcementLearning(MsCflpCiSolution* solution) const {
+  const std::vector<MsCflpCiNeighboorhodExplorer*>& explorers = GetNeighborhoodExplorers();
+  if (explorers.empty()) {
+    return solution;
+  }
   unsigned iter_without_improvement = 0;
   unsigned total_iter = 0;
-  const std::vector<MsCflpCiNeighboorhodExplorer*>& explorers = GetNeighborhoodExplorers();
   std::vector<double> neighborhoods_confidence(explorers.size(), initial_confidence_);
   size_t current_best_neighborhood_index = std::rand() % explorers.size();
-  MsCflpCiSolution* current_solution = new MsCflpCiSolution(*solution);
+  MsCflpCiSolution* current_solution = solution;
 
-  while (iter_without_improvement < max_rl_vnd_iter_without_improvement &&
+  while (iter_without_improvement < max_rl_vnd_iter_without_improvement_ &&
          total_iter < max_rl_vnd_iter_) {
     /// Epsilon-greedy selection
     size_t current_neighborhood_index = 0;
@@ -86,10 +94,8 @@ MsCflpCiSolution* GraspMsCflpCiGvnsRl::VndWithReinforcementLearning(MsCflpCiSolu
       current_neighborhood_index = current_best_neighborhood_index;
     }
     const double previous_cost = current_solution->GetTotalCost();
-    //unsigned iter = 0;
     /// Local search
     while (true) {
-      //std::cout << "iter: " << iter++ << ", neighborhood: " << current_neighborhood_index << std::endl;
       MsCflpCiSolution* tmp_solution = explorers[current_neighborhood_index]->Explore(
           current_solution, GetAmountTolerance(), GetImprovementTolerance());
       if (tmp_solution == nullptr) {
@@ -98,6 +104,7 @@ MsCflpCiSolution* GraspMsCflpCiGvnsRl::VndWithReinforcementLearning(MsCflpCiSolu
       delete current_solution;
       current_solution = tmp_solution;
     }
+
     /// Compute reward based on improvement
     const double reward = CalculateProportionalReward(previous_cost, current_solution);
     if (reward == 0.0) {
@@ -109,6 +116,7 @@ MsCflpCiSolution* GraspMsCflpCiGvnsRl::VndWithReinforcementLearning(MsCflpCiSolu
     neighborhoods_confidence[current_neighborhood_index] += learning_rate_ * 
         (reward - neighborhoods_confidence[current_neighborhood_index]);
     /// Update best neighborhood index
+    current_best_neighborhood_index = 0;
     for (size_t i = 0; i < neighborhoods_confidence.size(); ++i) {
       if (neighborhoods_confidence[i] > neighborhoods_confidence[current_best_neighborhood_index]) {
         current_best_neighborhood_index = i;
@@ -148,8 +156,12 @@ double GraspMsCflpCiGvnsRl::CalculateBinaryReward(double previous_cost, MsCflpCi
  * @return Reward value in [0, 1].
  */
 double GraspMsCflpCiGvnsRl::CalculateProportionalReward(double previous_cost, MsCflpCiSolution* new_solution) const {
-  if (new_solution == nullptr) {
+  if (new_solution == nullptr || previous_cost <= 0.0) {
     return 0.0;
   }
-  return (previous_cost  - new_solution->GetTotalCost()) / previous_cost;
+  const double improvement = previous_cost - new_solution->GetTotalCost();
+  if (improvement <= GetImprovementTolerance()) {
+    return 0.0;
+  }
+  return improvement / previous_cost;
 }

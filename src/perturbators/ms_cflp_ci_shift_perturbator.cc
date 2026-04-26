@@ -17,7 +17,7 @@
 MsCflpCiSolution* MsCflpCiShiftPerturbator::Perturbate(const MsCflpCiSolution* solution, double amount_tol, double improvement_tol) const {
   const int customers_amount = solution->GetCustomerCount();
   const int facilities_amount = solution->GetFacilityCount();
-  const unsigned max_iter = customers_amount * facilities_amount * 100;
+  const unsigned max_iter = customers_amount * facilities_amount * 10;
   if (customers_amount <= 0 || facilities_amount <= 1) {
     return new MsCflpCiSolution(*solution);
   }
@@ -40,8 +40,9 @@ MsCflpCiSolution* MsCflpCiShiftPerturbator::Perturbate(const MsCflpCiSolution* s
     if (max_amount <= amount_tol) {
       continue;
     }
-    const double random_fraction = static_cast<double>(std::rand()) / static_cast<double>(RAND_MAX);
-    const double amount = amount_tol + random_fraction * (max_amount - amount_tol);
+    //const double random_fraction = static_cast<double>(std::rand()) / static_cast<double>(RAND_MAX);
+    //const double amount = amount_tol + random_fraction * (max_amount - amount_tol);
+    const double amount = max_amount;
     if (!CanShiftFlow(*solution, customer_id, source_facility, target_facility,
                       amount, amount_tol, improvement_tol)) {
       continue;

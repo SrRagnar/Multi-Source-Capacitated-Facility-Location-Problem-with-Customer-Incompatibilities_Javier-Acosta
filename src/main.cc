@@ -86,7 +86,7 @@ int main(int argc, char* argv[]) {
     const std::string instance_path = argv[1];
     const std::string algorithm = argv[2];
     const std::string instance_name = GetInstanceName(instance_path);
-    const std::vector<int> lrc_sizes = {5, 10, 12, 15, 20, 25};
+    const std::vector<int> lrc_sizes = {5, 15, 20, 25, 30, 40, 50, 60, 70, 80, 90, 100};
     const int executions = 1;
 
     PrintTableHeader();
@@ -165,7 +165,8 @@ int main(int argc, char* argv[]) {
             << std::setw(12) << std::fixed << std::setprecision(2) << solution->GetTotalCost()
             << std::setw(10) << solution->CountIncompatibilityViolations()
             << std::setw(12) << std::fixed << std::setprecision(6) << cpu_time
-            << std::endl;
+            << std::endl
+            << "Object value from scratch: " << solution->ComputeObjectiveFromScratch() << std::endl;
         delete solution;
         delete solver;
         delete instance;
