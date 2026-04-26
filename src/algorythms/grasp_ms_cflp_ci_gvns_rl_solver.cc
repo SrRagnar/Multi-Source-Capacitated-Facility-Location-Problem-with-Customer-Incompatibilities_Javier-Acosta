@@ -33,33 +33,45 @@ Solution* GraspMsCflpCiGvnsRl::Postprocess(Solution* solution) {
   if (perturbators_.empty()) {
     return current_solution;
   }
+
   unsigned iter = 0;
   unsigned iter_without_improvement = 0;
+
   while (iter < max_gvns_iter_ &&
          iter_without_improvement < max_gvns_iter_without_improvement_) {
     ++iter;
-    const size_t perturbator_index = std::rand() % perturbators_.size();
-    MsCflpCiSolution* new_solution = perturbators_[perturbator_index]->
-        Perturbate(current_solution, GetAmountTolerance(), GetImprovementTolerance());
-    if (new_solution == nullptr) {
-      ++iter_without_improvement;
-      continue;
+    unsigned perturbation_level = 1;
+    while (perturbation_level <= num_perturbations_) {
+      // Perturbation phase
+      MsCflpCiSolution* new_solution = new MsCflpCiSolution(*current_solution);
+      for (unsigned i = 0; i < perturbation_level; ++i) {
+        const size_t perturbator_index = std::rand() % perturbators_.size();
+        MsCflpCiSolution* tmp = perturbators_[perturbator_index]->Perturbate(
+            new_solution, GetAmountTolerance(), GetImprovementTolerance());
+
+        if (tmp != nullptr) {
+          delete new_solution;
+          new_solution = tmp;
+        }
+      }
+      /// Apply VND with RL over the perturbed solution
+      new_solution = VndWithReinforcementLearning(new_solution);
+      /// Accept only if strictly better than current solution
+      if (new_solution != nullptr &&
+          new_solution->GetTotalCost() < current_solution->GetTotalCost() - GetImprovementTolerance()) {
+        delete current_solution;
+        current_solution = new_solution;
+        iter_without_improvement = 0;
+        perturbation_level = 1; 
+      } else {
+        delete new_solution;
+        ++perturbation_level;
+      }
     }
-    /// Apply VND with RL over the perturbed solution
-    new_solution = VndWithReinforcementLearning(new_solution);
-    /// Accept only if strictly better than current solution
-    if (new_solution != nullptr &&
-        new_solution->GetTotalCost() < current_solution->GetTotalCost() - GetImprovementTolerance()) {
-      delete current_solution;
-      current_solution = new_solution;
-      iter_without_improvement = 0;
-      continue;
-    }
-    delete new_solution;
+
     ++iter_without_improvement;
   }
 
-  /// Return final solution without extra copy
   return current_solution;
 }
 
@@ -164,4 +176,71 @@ double GraspMsCflpCiGvnsRl::CalculateProportionalReward(double previous_cost, Ms
     return 0.0;
   }
   return improvement / previous_cost;
+}
+
+/**
+ * @brief Applies a classic VND to a solution.
+ *
+ * @param solution Initial solution (ownership transferred).
+ * @return Locally improved solution.
+ */
+MsCflpCiSolution* GraspMsCflpCiGvnsRl::ClassicVnd(MsCflpCiSolution* solution) const {
+  MsCflpCiSolution* current = solution;
+  if (current == nullptr) {
+    throw std::invalid_argument("Solution is not of type MsCflpCiSolution.");
+  }
+  const std::vector<MsCflpCiNeighboorhodExplorer*>& explorers = GetNeighborhoodExplorers();
+  size_t explorer_index = 0;
+
+  while (explorer_index < explorers.size()) {
+    MsCflpCiSolution* explored_solution = explorers[explorer_index]->Explore(current, 
+                                                                             GetAmountTolerance(), 
+                                                                             GetImprovementTolerance());
+    if (explored_solution != nullptr) {
+      delete current;
+      current = explored_solution;
+      explorer_index = 0;
+    } else {
+      ++explorer_index;
+    }
+  }
+
+  return current;
+}
+
+/**
+ * @brief Applies a random VND to a solution.
+ *
+ * @param solution Initial solution (ownership transferred).
+ * @return Locally improved solution.
+ */
+MsCflpCiSolution* GraspMsCflpCiGvnsRl::RVnd(MsCflpCiSolution* solution) const {
+  MsCflpCiSolution* current = solution;
+  if (current == nullptr) {
+    throw std::invalid_argument("Solution is not of type MsCflpCiSolution.");
+  }
+  const std::vector<MsCflpCiNeighboorhodExplorer*>& explorers = GetNeighborhoodExplorers();
+  std::vector<size_t> active_explorers;
+  for (size_t i = 0; i < explorers.size(); ++i) {
+    active_explorers.push_back(i);
+  }
+
+  while (!active_explorers.empty()) {
+    const size_t random_position = static_cast<size_t>(std::rand()) % active_explorers.size();
+    const size_t explorer_index = active_explorers[random_position];
+    MsCflpCiSolution* explored_solution = explorers[explorer_index]->Explore(current, GetAmountTolerance(), GetImprovementTolerance());
+
+    if (explored_solution != nullptr) {
+      delete current;
+      current = explored_solution;
+      active_explorers.clear();
+      for (size_t i = 0; i < explorers.size(); ++i) {
+        active_explorers.push_back(i);
+      }
+    } else {
+      active_explorers.erase(active_explorers.begin() + static_cast<long>(random_position));
+    }
+  }
+
+  return current;
 }

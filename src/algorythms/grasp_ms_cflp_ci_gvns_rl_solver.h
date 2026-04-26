@@ -36,10 +36,13 @@ class GraspMsCflpCiGvnsRl : public GraspMsCflpCiSolver {
   const double epsilon_ = 0.2;
   const double learning_rate_ = 0.2;
   const double initial_confidence_ = 0.5;
+  const unsigned num_perturbations_ = 7;
 
-  MsCflpCiSolution* VndWithReinforcementLearning(MsCflpCiSolution* Solution) const;
-  double CalculateBinaryReward(double previus_cost, MsCflpCiSolution* new_solution) const;
-  double CalculateProportionalReward(double previus_cost, MsCflpCiSolution* new_solution) const;
+  MsCflpCiSolution* VndWithReinforcementLearning(MsCflpCiSolution* solution) const;
+  MsCflpCiSolution* ClassicVnd(MsCflpCiSolution* solution) const;
+  MsCflpCiSolution* RVnd(MsCflpCiSolution* solution) const;
+  double CalculateBinaryReward(double previous_cost, MsCflpCiSolution* new_solution) const;
+  double CalculateProportionalReward(double previous_cost, MsCflpCiSolution* new_solution) const;
 };
 
 #endif
