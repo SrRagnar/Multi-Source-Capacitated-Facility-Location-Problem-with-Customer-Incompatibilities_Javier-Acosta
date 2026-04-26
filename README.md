@@ -79,7 +79,7 @@ Initially, performance was much worse due to excessive memory copies, which was 
 ## Author
 
 Javier Acosta Portocarrero
-alu0101660769@ull.edu.es / javier.acosta
+alu0101660769@ull.edu.es / javier.acosta.porto@gmail.com (personal email)
 
 ## License
 
