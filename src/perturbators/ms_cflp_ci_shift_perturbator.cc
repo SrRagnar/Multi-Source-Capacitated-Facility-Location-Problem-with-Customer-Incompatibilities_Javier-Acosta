@@ -14,6 +14,18 @@
 
 #include "ms_cflp_ci_shift_perturbator.h"
 
+/**
+ * @brief Perturbation strategy that shifts flow between two facilities.
+ *
+ * Randomly selects a customer and two facilities, and tries to shift some
+ * amount of flow from one facility to the other. The move is applied only if
+ * it is feasible.
+ *
+ * @param solution The solution to perturbate.
+ * @param amount_tol Numerical tolerance for flow amounts.
+ * @param improvement_tol Numerical tolerance for improvement acceptance.
+ * @return Perturbed solution (ownership transferred to caller).
+ */
 MsCflpCiSolution* MsCflpCiShiftPerturbator::Perturbate(const MsCflpCiSolution* solution, double amount_tol, double improvement_tol) const {
   const int customers_amount = solution->GetCustomerCount();
   const int facilities_amount = solution->GetFacilityCount();
