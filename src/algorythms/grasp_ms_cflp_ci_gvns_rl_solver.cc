@@ -33,25 +33,26 @@ Solution* GraspMsCflpCiGvnsRl::Postprocess(Solution* solution) {
   if (perturbators_.empty()) {
     return current_solution;
   }
-
   unsigned iter = 0;
   unsigned iter_without_improvement = 0;
 
   while (iter < max_gvns_iter_ &&
          iter_without_improvement < max_gvns_iter_without_improvement_) {
     ++iter;
-    unsigned perturbation_level = 1;
-    while (perturbation_level <= num_perturbations_) {
-      // Perturbation phase
+    size_t perturbator_index = 0;
+    bool improved = false;
+
+    while (perturbator_index < perturbators_.size()) {
+      // Perturbation phase (fixed strength)
       MsCflpCiSolution* new_solution = new MsCflpCiSolution(*current_solution);
-      for (unsigned i = 0; i < perturbation_level; ++i) {
-        const size_t perturbator_index = std::rand() % perturbators_.size();
+      bool perturbation_accepted = false;
+      for (unsigned i = 0; i < num_perturbations_; ++i) {
         MsCflpCiSolution* tmp = perturbators_[perturbator_index]->Perturbate(
             new_solution, GetAmountTolerance(), GetImprovementTolerance());
-
         if (tmp != nullptr) {
           delete new_solution;
           new_solution = tmp;
+          perturbation_accepted = true;
         }
       }
       /// Apply VND with RL over the perturbed solution
@@ -62,14 +63,16 @@ Solution* GraspMsCflpCiGvnsRl::Postprocess(Solution* solution) {
         delete current_solution;
         current_solution = new_solution;
         iter_without_improvement = 0;
-        perturbation_level = 1; 
+        perturbator_index = 0;
+        improved = true;
       } else {
         delete new_solution;
-        ++perturbation_level;
+        ++perturbator_index;
       }
     }
-
-    ++iter_without_improvement;
+    if (!improved) {
+      ++iter_without_improvement;
+    }
   }
 
   return current_solution;
