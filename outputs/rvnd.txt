@@ -37,6 +37,8 @@ Object value from scratch: 30728.000000
 wlp01.dzn       100     1       29        15610.00    15173.00    30783.00    0         13.595014   
 Object value from scratch: 30783.000000
 
+
+# BE CAREFUL, THE ITER AMOUNT DESCRIBE BELLOW MAY CHANGE FOR THE RVND, FOR THIS REASON THE CPU_TIME IS NOT CONSISTENT IN RELATION WITH THE VND, WHICH IS ALWAYS FASTER
 # 300 iter
 
 Instancia       |LRC|   Ejec.   |J_open|  C. Fijo     C. Asig.    C. Total    Incomp.   CPU_Time    
