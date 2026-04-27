@@ -18,6 +18,7 @@
 #include <vector>
 
 #include "solutions/ms_cflp_ci_solution.h"
+#include "solutions/ms_cflp_ci_solution_saver.h"
 #include "instances/ms_cflp_ci_instance.h"
 #include "instances/ms_cflp_ci_instance_csi_loader.h"
 #include "algorythms/ms_cflp_ci_general_solver.h"
@@ -74,9 +75,9 @@ void PrintTableHeader() {
  * @return Exit code.
  */
 int main(int argc, char* argv[]) {
-  if (argc != 3) {
+  if (argc != 3 && argc != 4) {
     std::cerr << "Usage: " << argv[0]
-              << " <instance_file.dzn> <grasp-[vnd|rvnd|gvns-rl]|greedy>" << std::endl;
+              << " <instance_file.dzn> <grasp-[vnd|rvnd|gvns-rl]|greedy> [output_file]" << std::endl;
     return 1;
   }
 
@@ -85,6 +86,7 @@ int main(int argc, char* argv[]) {
   try {
     const std::string instance_path = argv[1];
     const std::string algorithm = argv[2];
+    const std::string output_file = (argc == 4) ? argv[3] : "outputs/saved_solutions.txt";
     const std::string instance_name = GetInstanceName(instance_path);
     const std::vector<int> lrc_sizes = {15, 40,  60,  80,  100};
     const int executions = 1;
@@ -167,6 +169,8 @@ int main(int argc, char* argv[]) {
             << std::setw(12) << std::fixed << std::setprecision(6) << cpu_time
             << std::endl
             << "Object value from scratch: " << solution->ComputeObjectiveFromScratch() << std::endl;
+        MsCflpCiSolutionSaver solution_saver(output_file);
+        solution_saver.Save(*solution, instance_name, algorithm, lrc_size, execution, cpu_time);
         delete solution;
         delete solver;
         delete instance;

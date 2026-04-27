@@ -39,7 +39,7 @@ class GraspMsCflpCiSolver : public GraspAlgorythm {
   
  private:
   unsigned current_grasp_iteration_ = 0;
-  unsigned max_grasp_iterations_ = 100;
+  unsigned max_grasp_iterations_ = 1;
   unsigned lcr_cardinality_ = 1;
   std::vector<MsCflpCiNeighboorhodExplorer*> neighboorhod_explorers_;
   static constexpr double kAmountTolerance_ = 1e-8;
