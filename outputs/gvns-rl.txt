@@ -71,6 +71,44 @@ Object value from scratch: 29439.000000
 wlp01.dzn       100     1       27        14970.00    14543.00    29513.00    0         1226.558539 
 Object value from scratch: 29513.000000
 
+shini@Javilongo:~/Multi-Source-Capacitated-Facility-Location-Problem-with-Customer-Incompatibilities_Javier-Acosta$ ./practice5_DAA inputs/wlp01.dzn grasp-gvns-rl
+Instancia       |LRC|   Ejec.   |J_open|  C. Fijo     C. Asig.    C. Total    Incomp.   CPU_Time    
+----------------------------------------------------------------------------------------------------
+wlp01.dzn       15      1       26        14730.00    14802.00    29532.00    0         1303.202640 
+Object value from scratch: 29532.000000
+----------------------------------------------------------------------------------------------------
+wlp01.dzn       40      1       26        14900.00    14403.00    29303.00    0         1268.661961 
+Object value from scratch: 29303.000000
+----------------------------------------------------------------------------------------------------
+wlp01.dzn       60      1       27        15550.00    13970.00    29520.00    0         1430.632409 
+Object value from scratch: 29520.000000
+----------------------------------------------------------------------------------------------------
+wlp01.dzn       80      1       27        15550.00    13971.00    29521.00    0         1388.683934 
+Object value from scratch: 29521.000000
+----------------------------------------------------------------------------------------------------
+wlp01.dzn       100     1       25        14990.00    14207.00    29197.00    0         1261.317230 
+Object value from scratch: 29197.000000
+
+# 10 grasp iter:
+
+shini@Javilongo:~/Multi-Source-Capacitated-Facility-Location-Problem-with-Customer-Incompatibilities_Javier-Acosta$ ./practice5_DAA inputs/wlp02.dzn grasp-gvns-rl
+Instancia       |LRC|   Ejec.   |J_open|  C. Fijo     C. Asig.    C. Total    Incomp.   CPU_Time    
+----------------------------------------------------------------------------------------------------
+wlp02.dzn       15      1       59        32930.00    22512.00    55442.00    0         1945.645507 
+Object value from scratch: 55442.000000
+----------------------------------------------------------------------------------------------------
+wlp02.dzn       40      1       60        33810.00    21683.00    55493.00    0         1799.868350 
+Object value from scratch: 55493.000000
+----------------------------------------------------------------------------------------------------
+wlp02.dzn       60      1       58        33240.00    22492.00    55732.00    0         1619.131948 
+Object value from scratch: 55732.000000
+----------------------------------------------------------------------------------------------------
+wlp02.dzn       80      1       58        32610.00    22509.00    55119.00    0         1681.997285 
+Object value from scratch: 55119.000000
+----------------------------------------------------------------------------------------------------
+wlp02.dzn       100     1       59        33180.00    22529.00    55709.00    0         1528.290959 
+Object value from scratch: 55709.000000
+
 # 1 grasp iter:
 
 shini@Javilongo:~/Multi-Source-Capacitated-Facility-Location-Problem-with-Customer-Incompatibilities_Javier-Acosta$ ./practice5_DAA inputs/wlp02.dzn grasp-gvns-rl
@@ -224,6 +262,24 @@ Object value from scratch: 68307.000000
 wlp03.dzn       90      1       81        44230.00    23917.00    68147.00    0         536.374104  
 Object value from scratch: 68147.000000
 
+shini@Javilongo:~/Multi-Source-Capacitated-Facility-Location-Problem-with-Customer-Incompatibilities_Javier-Acosta$ ./practice5_DAA inputs/wlp03.dzn grasp-gvns-rl
+Instancia       |LRC|   Ejec.   |J_open|  C. Fijo     C. Asig.    C. Total    Incomp.   CPU_Time    
+----------------------------------------------------------------------------------------------------
+wlp03.dzn       15      1       79        44180.00    23674.00    67854.00    0         667.933206  
+Object value from scratch: 67854.000000
+----------------------------------------------------------------------------------------------------
+wlp03.dzn       40      1       83        46220.00    22964.00    69184.00    0         396.789338  
+Object value from scratch: 69184.000000
+----------------------------------------------------------------------------------------------------
+wlp03.dzn       60      1       84        44810.00    23803.00    68613.00    0         674.722235  
+Object value from scratch: 68613.000000
+----------------------------------------------------------------------------------------------------
+wlp03.dzn       80      1       82        44360.00    24116.00    68476.00    0         436.624278  
+Object value from scratch: 68476.000000
+----------------------------------------------------------------------------------------------------
+wlp03.dzn       100     1       82        43960.00    24188.00    68148.00    0         314.285369  
+Object value from scratch: 68148.000000
+
 shini@Javilongo:~/Multi-Source-Capacitated-Facility-Location-Problem-with-Customer-Incompatibilities_Javier-Acosta$ ./practice5_DAA inputs/wlp04.dzn grasp-gvns-rl
 Instancia       |LRC|   Ejec.   |J_open|  C. Fijo     C. Asig.    C. Total    Incomp.   CPU_Time    
 ----------------------------------------------------------------------------------------------------
@@ -238,3 +294,4 @@ Object value from scratch: 90239.000000
 ----------------------------------------------------------------------------------------------------
 wlp04.dzn       90      1       109       59900.00    31004.00    90904.00    0         1080.020577 
 Object value from scratch: 90904.000000
+
