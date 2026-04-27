@@ -15,6 +15,14 @@
 
 #include "ms_cflp_ci_swap_explorer.h"
 
+/**
+ * @brief Explores the neighborhood of a solution using client swap moves.
+ *
+ * @param solution Initial solution.
+ * @param amount_tol Amount tolerance.
+ * @param improvement_tol Improvement tolerance.
+ * @return Locally improved solution.
+ */
 MsCflpCiSolution* MsCflpCiSwapExplorer::Explore(const MsCflpCiSolution* solution, 
                                                  double amount_tol, double improvement_tol) const {
   const int customer_count = solution->GetCustomerCount();
@@ -58,12 +66,9 @@ MsCflpCiSolution* MsCflpCiSwapExplorer::Explore(const MsCflpCiSolution* solution
     return nullptr;
   }
   MsCflpCiSolution* best_solution = new MsCflpCiSolution(*solution);
-  const double amount_a =
-      solution->GetCustomerFacilityFraction(best_customer_a, best_facility_a) *
-      solution->GetInstance().GetCustomerDemand(best_customer_a);
-  const double amount_b =
-      solution->GetCustomerFacilityFraction(best_customer_b, best_facility_b) *
-      solution->GetInstance().GetCustomerDemand(best_customer_b);
+  const double amount_a = solution->GetAssignedAmount(best_customer_a, best_facility_a);
+  const double amount_b = solution->GetAssignedAmount(best_customer_b, best_facility_b);
+
   if (!best_solution->RemoveFlow(best_customer_a, best_facility_a, amount_a) ||
       !best_solution->RemoveFlow(best_customer_b, best_facility_b, amount_b) ||
       !best_solution->AddFlow(best_customer_a, best_facility_b, amount_a) ||
@@ -101,10 +106,6 @@ bool MsCflpCiSwapExplorer::CanSwapCustomersBetweenFacilities(const MsCflpCiSolut
   if (!solution.IsCustomerFullySatisfied(customer_a) || !solution.IsCustomerFullySatisfied(customer_b)) {
     return false;
   }
-  const std::vector<std::vector<int>>& facilities_of = solution.GetFacilitiesOf();
-  if (facilities_of[customer_a].size() != 1 || facilities_of[customer_b].size() != 1) {
-    return false;
-  }
   const std::vector<std::vector<bool>>& assignment = solution.GetAssignments();
   if (!assignment[customer_a][facility_a] || !assignment[customer_b][facility_b]) {
     return false;
@@ -112,12 +113,8 @@ bool MsCflpCiSwapExplorer::CanSwapCustomersBetweenFacilities(const MsCflpCiSolut
 
   const double amount_a = solution.GetAssignedAmount(customer_a, facility_a);
   const double amount_b = solution.GetAssignedAmount(customer_b, facility_b);
-  const MsCflpCiInstance& instance = solution.GetInstance();
-  const double demand_a = instance.GetCustomerDemand(customer_a);
-  const double demand_b = instance.GetCustomerDemand(customer_b);
 
-  if (std::fabs(amount_a - demand_a) > amount_tol ||
-      std::fabs(amount_b - demand_b) > amount_tol) {
+  if (amount_a <= amount_tol || amount_b <= amount_tol) {
     return false;
   }
   if (amount_b - (solution.GetResidualCapacity(facility_a) + amount_a) > amount_tol) {
@@ -126,11 +123,27 @@ bool MsCflpCiSwapExplorer::CanSwapCustomersBetweenFacilities(const MsCflpCiSolut
   if (amount_a - (solution.GetResidualCapacity(facility_b) + amount_b) > amount_tol) {
     return false;
   }
+
+  bool customers_are_incompatible = false;
+  const std::vector<int>& incompatible_customers_a = solution.GetInstance().GetIncompatibleCustomers(customer_a);
+  for (int incompatible_customer : incompatible_customers_a) {
+    if (incompatible_customer == customer_b) {
+      customers_are_incompatible = true;
+      break;
+    }
+  }
   const std::vector<std::vector<int>>& incompatibility_count = solution.GetIncompatibilityCounter();
-  if (incompatibility_count[customer_a][facility_b] != 0) {
+  int incompatibilities_for_a_in_facility_b = incompatibility_count[customer_a][facility_b];
+  int incompatibilities_for_b_in_facility_a = incompatibility_count[customer_b][facility_a];
+
+  if (customers_are_incompatible) {
+    --incompatibilities_for_a_in_facility_b;
+    --incompatibilities_for_b_in_facility_a;
+  }
+  if (!assignment[customer_a][facility_b] && incompatibilities_for_a_in_facility_b != 0) {
     return false;
   }
-  if (incompatibility_count[customer_b][facility_a] != 0) {
+  if (!assignment[customer_b][facility_a] && incompatibilities_for_b_in_facility_a != 0) {
     return false;
   }
 
@@ -150,8 +163,8 @@ double MsCflpCiSwapExplorer::EvaluateSwapDelta(const MsCflpCiSolution& solution,
                            int customer_a, int facility_a, int customer_b, int facility_b,
                            double amount_tol, double improvement_tol) const {
   const MsCflpCiInstance& instance_ = solution.GetInstance();
-  const double amount_a = instance_.GetCustomerDemand(customer_a);
-  const double amount_b = instance_.GetCustomerDemand(customer_b);
+  const double amount_a = solution.GetAssignedAmount(customer_a, facility_a);
+  const double amount_b = solution.GetAssignedAmount(customer_b, facility_b);
 
   const double cost_a_old = instance_.GetAssignmentCost(customer_a, facility_a);
   const double cost_a_new = instance_.GetAssignmentCost(customer_a, facility_b);
