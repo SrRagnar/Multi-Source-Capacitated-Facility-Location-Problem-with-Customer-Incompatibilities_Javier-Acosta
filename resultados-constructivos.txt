@@ -1,0 +1,31 @@
+Greedy:
+
+usuario@ubuntu:~/daa/Multi-Source-Capacitated-Facility-Location-Problem-with-Customer-Incompatibilities_Javier-Acosta$ ./practice5_DAA inputs/wlp03.dzn greedy
+Instancia       |LRC|   Ejec.   |J_open|  C. Fijo     C. Asig.    C. Total    Incomp.   CPU_Time    
+----------------------------------------------------------------------------------------------------
+wlp03.dzn       5       1       93        46400.00    40248.00    86648.00    0         0.001385    
+Object value from scratch: 86648.000000
+
+
+Fase constructiva de GRASP:
+
+usuario@ubuntu:~/daa/Multi-Source-Capacitated-Facility-Location-Problem-with-Customer-Incompatibilities_Javier-Acosta$ ./practice5_DAA inputs/wlp03.dzn grasp-construction
+Instancia       |LRC|   Ejec.   |J_open|  C. Fijo     C. Asig.    C. Total    Incomp.   CPU_Time    
+----------------------------------------------------------------------------------------------------
+wlp03.dzn       2       1       107       57660.00    34432.00    92092.00    0         0.118421    
+Object value from scratch: 92092.000000
+----------------------------------------------------------------------------------------------------
+wlp03.dzn       5       1       106       56860.00    48244.00    105104.00   0         0.117445    
+Object value from scratch: 105104.000000
+----------------------------------------------------------------------------------------------------
+wlp03.dzn       10      1       104       55860.00    66126.00    121986.00   0         0.117456    
+Object value from scratch: 121986.000000
+----------------------------------------------------------------------------------------------------
+wlp03.dzn       15      1       101       56490.00    81143.00    137633.00   0         0.116179    
+Object value from scratch: 137633.000000
+----------------------------------------------------------------------------------------------------
+wlp03.dzn       20      1       102       56560.00    97748.00    154308.00   0         0.116811    
+Object value from scratch: 154308.000000
+----------------------------------------------------------------------------------------------------
+wlp03.dzn       30      1       98        55140.00    124052.00   179192.00   0         0.118631    
+Object value from scratch: 179192.000000
