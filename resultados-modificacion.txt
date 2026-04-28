@@ -1,0 +1,15 @@
+usuario@ubuntu:~/daa/Multi-Source-Capacitated-Facility-Location-Problem-with-Customer-Incompatibilities_Javier-Acosta$ ./practice5_DAA inputs/wlp02.dzn grasp-rvnd outputs/modification2.txt
+Instancia       |LRC|   Ejec.   |J_open|  C. Fijo     C. Asig.    C. Total    Incomp.   CPU_Time    
+----------------------------------------------------------------------------------------------------
+wlp02.dzn       40      1       65        37300.00    22806.00    60106.00    0         12.753367   
+Object value from scratch: 60106.000000
+usuario@ubuntu:~/daa/Multi-Source-Capacitated-Facility-Location-Problem-with-Customer-Incompatibilities_Javier-Acosta$ ./practice5_DAA inputs/wlp02.dzn grasp-rvnd outputs/modification2.txt
+Instancia       |LRC|   Ejec.   |J_open|  C. Fijo     C. Asig.    C. Total    Incomp.   CPU_Time    
+----------------------------------------------------------------------------------------------------
+wlp02.dzn       40      1       59        34890.00    25072.00    59962.00    0         14.051001   
+Object value from scratch: 59962.000000
+usuario@ubuntu:~/daa/Multi-Source-Capacitated-Facility-Location-Problem-with-Customer-Incompatibilities_Javier-Acosta$ ./practice5_DAA inputs/wlp03.dzn grasp-rvnd outputs/modification3.txt
+Instancia       |LRC|   Ejec.   |J_open|  C. Fijo     C. Asig.    C. Total    Incomp.   CPU_Time    
+----------------------------------------------------------------------------------------------------
+wlp03.dzn       40      1       88        46950.00    25157.00    72107.00    0         56.484876   
+Object value from scratch: 72107.000000
