@@ -55,9 +55,13 @@ Solution* GraspMsCflpCiGvnsRl::Postprocess(Solution* solution) {
           perturbation_accepted = true;
         }
       }
-      /// Apply VND with RL over the perturbed solution
-      new_solution = VndWithReinforcementLearning(new_solution);
-      /// Accept only if strictly better than current solution
+
+      
+      // MODIFICACION:
+      new_solution = RVnd(new_solution);
+
+
+      // Accept only if strictly better than current solution
       if (new_solution != nullptr &&
           new_solution->GetTotalCost() < current_solution->GetTotalCost() - GetImprovementTolerance()) {
         delete current_solution;

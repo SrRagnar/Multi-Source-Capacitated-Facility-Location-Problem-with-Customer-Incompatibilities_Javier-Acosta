@@ -19,6 +19,7 @@
 #include "grasp_ms_cflp_ci_solver.h"
 #include "../solutions/ms_cflp_ci_solution.h"
 #include "../instances/ms_cflp_ci_instance.h"
+#include "../explorers/ms_cflp_ci_swap_explorer.h"
 
 /**
  * @brief Preprocesses the input instance.
@@ -111,8 +112,22 @@ Solution* GraspMsCflpCiSolver::ConstructSolution(Instance* input) {
   }
 
   ++current_grasp_iteration_;
-  //std::cout << " 11111" << std::endl;
-  return constructive_solution;
+
+  
+  // MODFICACION:
+  MsCflpCiSolution* improved_solution = constructive_solution;
+  MsCflpCiSwapExplorer* swap_explorer = new MsCflpCiSwapExplorer();
+  while (true) {
+    MsCflpCiSolution* neighbor = swap_explorer->Explore(improved_solution, kAmountTolerance_, kImprovementTolerance_);
+    if (neighbor != nullptr && neighbor->GetTotalCost() < improved_solution->GetTotalCost() - kImprovementTolerance_) {
+      delete improved_solution;
+      improved_solution = neighbor;
+    } else {
+      delete neighbor;
+      break;
+    }
+  }
+  return improved_solution;
 }
 
 /**

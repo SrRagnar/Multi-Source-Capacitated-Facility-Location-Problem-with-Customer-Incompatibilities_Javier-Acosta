@@ -88,7 +88,7 @@ int main(int argc, char* argv[]) {
     const std::string algorithm = argv[2];
     const std::string output_file = (argc == 4) ? argv[3] : "outputs/saved_solutions.txt";
     const std::string instance_name = GetInstanceName(instance_path);
-    const std::vector<int> lrc_sizes = {15, 40,  60,  80,  100};
+    const std::vector<int> lrc_sizes = {40};
     const int executions = 1;
 
     PrintTableHeader();
@@ -126,8 +126,22 @@ int main(int argc, char* argv[]) {
               new MsCflpCiShiftPerturbator()
           };
           solver = new MsCflpCiGeneralSolver(new GraspMsCflpCiGvnsRl(lrc_size, explorers, perturbators));
+        // MODIFICACION:       
+        } else if (algorithm == "gvns-rvnd") {
+          std::vector<MsCflpCiNeighboorhodExplorer*> explorers = {
+              new MsCflpCiShiftExplorer(),
+              new MsCflpCiFacilitiesSwapExplorer(),
+          };
+          std::vector<MsCflpCiPerturbationStrategy*> perturbators = {
+              new MsCflpCiShiftPerturbator()
+          };
+          solver = new MsCflpCiGeneralSolver(new GraspMsCflpCiGvnsRl(lrc_size, explorers, perturbators));
+        // FINAL MODIFICACION
+
         } else if (algorithm == "greedy") {
           solver = new MsCflpCiGeneralSolver(new GreedyMsCflpCiSolver());
+        } else if (algorithm == "grasp-construction") {
+          solver = new MsCflpCiGeneralSolver(new GraspMsCflpCiVndSolver(lrc_size, {}));
         } else {
           delete instance;
           throw std::invalid_argument("Unknown algorithm: " + algorithm + " (use 'grasp-[vnd|rvnd]' or 'greedy')");
