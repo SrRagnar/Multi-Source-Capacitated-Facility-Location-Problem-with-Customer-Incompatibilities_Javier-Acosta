@@ -1,0 +1,869 @@
+============================================================
+Instance: wlp01.dzn
+Algorithm: grasp-gvns-rl
+LRC size: 5
+Execution: 1
+CPU time: 29.157096
+Fixed cost: 15950.00
+Transport cost: 14160.00
+Total cost: 30110.00
+Objective from scratch: 30110.00
+Open facilities: 28
+Incompatibility violations: 0
+Feasible: yes
+
+Open facilities detail:
+  Facility 1 | residual capacity: 0.00 | used capacity: 40.00
+  Facility 2 | residual capacity: 0.00 | used capacity: 40.00
+  Facility 6 | residual capacity: 0.00 | used capacity: 60.00
+  Facility 13 | residual capacity: 0.00 | used capacity: 40.00
+  Facility 14 | residual capacity: 9.00 | used capacity: 41.00
+  Facility 18 | residual capacity: 0.00 | used capacity: 30.00
+  Facility 19 | residual capacity: 10.00 | used capacity: 40.00
+  Facility 20 | residual capacity: 0.00 | used capacity: 80.00
+  Facility 21 | residual capacity: 18.00 | used capacity: 52.00
+  Facility 23 | residual capacity: 0.00 | used capacity: 60.00
+  Facility 24 | residual capacity: 21.00 | used capacity: 49.00
+  Facility 26 | residual capacity: 0.00 | used capacity: 70.00
+  Facility 27 | residual capacity: 8.00 | used capacity: 32.00
+  Facility 29 | residual capacity: 19.00 | used capacity: 61.00
+  Facility 31 | residual capacity: 0.00 | used capacity: 70.00
+  Facility 32 | residual capacity: 33.00 | used capacity: 47.00
+  Facility 33 | residual capacity: 0.00 | used capacity: 30.00
+  Facility 34 | residual capacity: 0.00 | used capacity: 30.00
+  Facility 38 | residual capacity: 0.00 | used capacity: 50.00
+  Facility 40 | residual capacity: 16.00 | used capacity: 44.00
+  Facility 41 | residual capacity: 0.00 | used capacity: 70.00
+  Facility 42 | residual capacity: 0.00 | used capacity: 60.00
+  Facility 43 | residual capacity: 8.00 | used capacity: 82.00
+  Facility 44 | residual capacity: 0.00 | used capacity: 30.00
+  Facility 45 | residual capacity: 0.00 | used capacity: 80.00
+  Facility 47 | residual capacity: 0.00 | used capacity: 40.00
+  Facility 48 | residual capacity: 30.00 | used capacity: 70.00
+  Facility 49 | residual capacity: 18.00 | used capacity: 62.00
+
+Customer assignments:
+  Customer 0 | demand: 18.00
+    -> Facility 20 | amount: 18.00 | fraction: 1.00 | unit cost: 14.00 | cost: 252.00
+  Customer 1 | demand: 9.00
+    -> Facility 44 | amount: 9.00 | fraction: 1.00 | unit cost: 3.00 | cost: 27.00
+  Customer 2 | demand: 20.00
+    -> Facility 20 | amount: 20.00 | fraction: 1.00 | unit cost: 14.00 | cost: 280.00
+  Customer 3 | demand: 13.00
+    -> Facility 6 | amount: 13.00 | fraction: 1.00 | unit cost: 6.00 | cost: 78.00
+  Customer 4 | demand: 12.00
+    -> Facility 41 | amount: 12.00 | fraction: 1.00 | unit cost: 8.00 | cost: 96.00
+  Customer 5 | demand: 11.00
+    -> Facility 6 | amount: 11.00 | fraction: 1.00 | unit cost: 5.00 | cost: 55.00
+  Customer 6 | demand: 9.00
+    -> Facility 19 | amount: 9.00 | fraction: 1.00 | unit cost: 11.00 | cost: 99.00
+  Customer 7 | demand: 5.00
+    -> Facility 26 | amount: 5.00 | fraction: 1.00 | unit cost: 16.00 | cost: 80.00
+  Customer 8 | demand: 9.00
+    -> Facility 27 | amount: 9.00 | fraction: 1.00 | unit cost: 6.00 | cost: 54.00
+  Customer 9 | demand: 10.00
+    -> Facility 48 | amount: 10.00 | fraction: 1.00 | unit cost: 10.00 | cost: 100.00
+  Customer 10 | demand: 17.00
+    -> Facility 14 | amount: 17.00 | fraction: 1.00 | unit cost: 12.00 | cost: 204.00
+  Customer 11 | demand: 20.00
+    -> Facility 42 | amount: 20.00 | fraction: 1.00 | unit cost: 13.00 | cost: 260.00
+  Customer 12 | demand: 17.00
+    -> Facility 26 | amount: 17.00 | fraction: 1.00 | unit cost: 9.00 | cost: 153.00
+  Customer 13 | demand: 17.00
+    -> Facility 31 | amount: 17.00 | fraction: 1.00 | unit cost: 13.00 | cost: 221.00
+  Customer 14 | demand: 17.00
+    -> Facility 18 | amount: 14.00 | fraction: 0.82 | unit cost: 5.00 | cost: 70.00
+    -> Facility 45 | amount: 3.00 | fraction: 0.18 | unit cost: 14.00 | cost: 42.00
+  Customer 15 | demand: 12.00
+    -> Facility 21 | amount: 12.00 | fraction: 1.00 | unit cost: 10.00 | cost: 120.00
+  Customer 16 | demand: 7.00
+    -> Facility 45 | amount: 7.00 | fraction: 1.00 | unit cost: 16.00 | cost: 112.00
+  Customer 17 | demand: 7.00
+    -> Facility 45 | amount: 6.00 | fraction: 0.86 | unit cost: 15.00 | cost: 90.00
+    -> Facility 33 | amount: 1.00 | fraction: 0.14 | unit cost: 6.00 | cost: 6.00
+  Customer 18 | demand: 5.00
+    -> Facility 6 | amount: 5.00 | fraction: 1.00 | unit cost: 13.00 | cost: 65.00
+  Customer 19 | demand: 9.00
+    -> Facility 49 | amount: 9.00 | fraction: 1.00 | unit cost: 8.00 | cost: 72.00
+  Customer 20 | demand: 7.00
+    -> Facility 40 | amount: 7.00 | fraction: 1.00 | unit cost: 15.00 | cost: 105.00
+  Customer 21 | demand: 9.00
+    -> Facility 45 | amount: 4.00 | fraction: 0.44 | unit cost: 7.00 | cost: 28.00
+    -> Facility 47 | amount: 5.00 | fraction: 0.56 | unit cost: 4.00 | cost: 20.00
+  Customer 22 | demand: 12.00
+    -> Facility 44 | amount: 12.00 | fraction: 1.00 | unit cost: 12.00 | cost: 144.00
+  Customer 23 | demand: 12.00
+    -> Facility 32 | amount: 12.00 | fraction: 1.00 | unit cost: 7.00 | cost: 84.00
+  Customer 24 | demand: 17.00
+    -> Facility 49 | amount: 15.00 | fraction: 0.88 | unit cost: 11.00 | cost: 165.00
+    -> Facility 26 | amount: 2.00 | fraction: 0.12 | unit cost: 8.00 | cost: 16.00
+  Customer 25 | demand: 13.00
+    -> Facility 45 | amount: 13.00 | fraction: 1.00 | unit cost: 8.00 | cost: 104.00
+  Customer 26 | demand: 10.00
+    -> Facility 33 | amount: 10.00 | fraction: 1.00 | unit cost: 9.00 | cost: 90.00
+  Customer 27 | demand: 19.00
+    -> Facility 48 | amount: 15.00 | fraction: 0.79 | unit cost: 9.00 | cost: 135.00
+    -> Facility 42 | amount: 4.00 | fraction: 0.21 | unit cost: 6.00 | cost: 24.00
+  Customer 28 | demand: 11.00
+    -> Facility 31 | amount: 11.00 | fraction: 1.00 | unit cost: 4.00 | cost: 44.00
+  Customer 29 | demand: 15.00
+    -> Facility 29 | amount: 15.00 | fraction: 1.00 | unit cost: 13.00 | cost: 195.00
+  Customer 30 | demand: 7.00
+    -> Facility 48 | amount: 7.00 | fraction: 1.00 | unit cost: 9.00 | cost: 63.00
+  Customer 31 | demand: 7.00
+    -> Facility 45 | amount: 7.00 | fraction: 1.00 | unit cost: 13.00 | cost: 91.00
+  Customer 32 | demand: 19.00
+    -> Facility 23 | amount: 19.00 | fraction: 1.00 | unit cost: 16.00 | cost: 304.00
+  Customer 33 | demand: 5.00
+    -> Facility 44 | amount: 5.00 | fraction: 1.00 | unit cost: 4.00 | cost: 20.00
+  Customer 34 | demand: 20.00
+    -> Facility 26 | amount: 20.00 | fraction: 1.00 | unit cost: 10.00 | cost: 200.00
+  Customer 35 | demand: 8.00
+    -> Facility 41 | amount: 8.00 | fraction: 1.00 | unit cost: 13.00 | cost: 104.00
+  Customer 36 | demand: 14.00
+    -> Facility 41 | amount: 14.00 | fraction: 1.00 | unit cost: 4.00 | cost: 56.00
+  Customer 37 | demand: 12.00
+    -> Facility 40 | amount: 12.00 | fraction: 1.00 | unit cost: 5.00 | cost: 60.00
+  Customer 38 | demand: 9.00
+    -> Facility 21 | amount: 9.00 | fraction: 1.00 | unit cost: 13.00 | cost: 117.00
+  Customer 39 | demand: 19.00
+    -> Facility 34 | amount: 19.00 | fraction: 1.00 | unit cost: 5.00 | cost: 95.00
+  Customer 40 | demand: 9.00
+    -> Facility 32 | amount: 3.00 | fraction: 0.33 | unit cost: 23.00 | cost: 69.00
+    -> Facility 45 | amount: 6.00 | fraction: 0.67 | unit cost: 21.00 | cost: 126.00
+  Customer 41 | demand: 16.00
+    -> Facility 49 | amount: 16.00 | fraction: 1.00 | unit cost: 26.00 | cost: 416.00
+  Customer 42 | demand: 19.00
+    -> Facility 18 | amount: 16.00 | fraction: 0.84 | unit cost: 11.00 | cost: 176.00
+    -> Facility 45 | amount: 3.00 | fraction: 0.16 | unit cost: 16.00 | cost: 48.00
+  Customer 43 | demand: 7.00
+    -> Facility 40 | amount: 7.00 | fraction: 1.00 | unit cost: 10.00 | cost: 70.00
+  Customer 44 | demand: 10.00
+    -> Facility 19 | amount: 10.00 | fraction: 1.00 | unit cost: 14.00 | cost: 140.00
+  Customer 45 | demand: 5.00
+    -> Facility 1 | amount: 1.00 | fraction: 0.20 | unit cost: 19.00 | cost: 19.00
+    -> Facility 41 | amount: 4.00 | fraction: 0.80 | unit cost: 18.00 | cost: 72.00
+  Customer 46 | demand: 14.00
+    -> Facility 24 | amount: 14.00 | fraction: 1.00 | unit cost: 7.00 | cost: 98.00
+  Customer 47 | demand: 8.00
+    -> Facility 13 | amount: 8.00 | fraction: 1.00 | unit cost: 10.00 | cost: 80.00
+  Customer 48 | demand: 5.00
+    -> Facility 23 | amount: 5.00 | fraction: 1.00 | unit cost: 7.00 | cost: 35.00
+  Customer 49 | demand: 20.00
+    -> Facility 26 | amount: 20.00 | fraction: 1.00 | unit cost: 7.00 | cost: 140.00
+  Customer 50 | demand: 13.00
+    -> Facility 45 | amount: 13.00 | fraction: 1.00 | unit cost: 20.00 | cost: 260.00
+  Customer 51 | demand: 18.00
+    -> Facility 45 | amount: 18.00 | fraction: 1.00 | unit cost: 14.00 | cost: 252.00
+  Customer 52 | demand: 5.00
+    -> Facility 29 | amount: 5.00 | fraction: 1.00 | unit cost: 5.00 | cost: 25.00
+  Customer 53 | demand: 8.00
+    -> Facility 47 | amount: 8.00 | fraction: 1.00 | unit cost: 4.00 | cost: 32.00
+  Customer 54 | demand: 16.00
+    -> Facility 49 | amount: 16.00 | fraction: 1.00 | unit cost: 3.00 | cost: 48.00
+  Customer 55 | demand: 17.00
+    -> Facility 2 | amount: 15.00 | fraction: 0.88 | unit cost: 6.00 | cost: 90.00
+    -> Facility 19 | amount: 2.00 | fraction: 0.12 | unit cost: 8.00 | cost: 16.00
+  Customer 56 | demand: 5.00
+    -> Facility 42 | amount: 5.00 | fraction: 1.00 | unit cost: 6.00 | cost: 30.00
+  Customer 57 | demand: 14.00
+    -> Facility 1 | amount: 14.00 | fraction: 1.00 | unit cost: 9.00 | cost: 126.00
+  Customer 58 | demand: 11.00
+    -> Facility 21 | amount: 11.00 | fraction: 1.00 | unit cost: 4.00 | cost: 44.00
+  Customer 59 | demand: 17.00
+    -> Facility 47 | amount: 17.00 | fraction: 1.00 | unit cost: 3.00 | cost: 51.00
+  Customer 60 | demand: 15.00
+    -> Facility 6 | amount: 15.00 | fraction: 1.00 | unit cost: 8.00 | cost: 120.00
+  Customer 61 | demand: 7.00
+    -> Facility 20 | amount: 7.00 | fraction: 1.00 | unit cost: 5.00 | cost: 35.00
+  Customer 62 | demand: 18.00
+    -> Facility 40 | amount: 18.00 | fraction: 1.00 | unit cost: 4.00 | cost: 72.00
+  Customer 63 | demand: 19.00
+    -> Facility 19 | amount: 19.00 | fraction: 1.00 | unit cost: 14.00 | cost: 266.00
+  Customer 64 | demand: 18.00
+    -> Facility 48 | amount: 18.00 | fraction: 1.00 | unit cost: 19.00 | cost: 342.00
+  Customer 65 | demand: 11.00
+    -> Facility 38 | amount: 11.00 | fraction: 1.00 | unit cost: 2.00 | cost: 22.00
+  Customer 66 | demand: 10.00
+    -> Facility 20 | amount: 10.00 | fraction: 1.00 | unit cost: 1.00 | cost: 10.00
+  Customer 67 | demand: 16.00
+    -> Facility 13 | amount: 16.00 | fraction: 1.00 | unit cost: 6.00 | cost: 96.00
+  Customer 68 | demand: 18.00
+    -> Facility 24 | amount: 18.00 | fraction: 1.00 | unit cost: 14.00 | cost: 252.00
+  Customer 69 | demand: 18.00
+    -> Facility 32 | amount: 18.00 | fraction: 1.00 | unit cost: 11.00 | cost: 198.00
+  Customer 70 | demand: 16.00
+    -> Facility 14 | amount: 16.00 | fraction: 1.00 | unit cost: 6.00 | cost: 96.00
+  Customer 71 | demand: 7.00
+    -> Facility 43 | amount: 7.00 | fraction: 1.00 | unit cost: 6.00 | cost: 42.00
+  Customer 72 | demand: 18.00
+    -> Facility 23 | amount: 18.00 | fraction: 1.00 | unit cost: 7.00 | cost: 126.00
+  Customer 73 | demand: 19.00
+    -> Facility 38 | amount: 19.00 | fraction: 1.00 | unit cost: 1.00 | cost: 19.00
+  Customer 74 | demand: 14.00
+    -> Facility 31 | amount: 14.00 | fraction: 1.00 | unit cost: 9.00 | cost: 126.00
+  Customer 75 | demand: 6.00
+    -> Facility 23 | amount: 6.00 | fraction: 1.00 | unit cost: 1.00 | cost: 6.00
+  Customer 76 | demand: 6.00
+    -> Facility 13 | amount: 6.00 | fraction: 1.00 | unit cost: 14.00 | cost: 84.00
+  Customer 77 | demand: 20.00
+    -> Facility 31 | amount: 20.00 | fraction: 1.00 | unit cost: 9.00 | cost: 180.00
+  Customer 78 | demand: 13.00
+    -> Facility 34 | amount: 11.00 | fraction: 0.85 | unit cost: 7.00 | cost: 77.00
+    -> Facility 23 | amount: 2.00 | fraction: 0.15 | unit cost: 9.00 | cost: 18.00
+  Customer 79 | demand: 16.00
+    -> Facility 1 | amount: 13.00 | fraction: 0.81 | unit cost: 8.00 | cost: 104.00
+    -> Facility 38 | amount: 3.00 | fraction: 0.19 | unit cost: 5.00 | cost: 15.00
+  Customer 80 | demand: 12.00
+    -> Facility 43 | amount: 12.00 | fraction: 1.00 | unit cost: 21.00 | cost: 252.00
+  Customer 81 | demand: 11.00
+    -> Facility 20 | amount: 11.00 | fraction: 1.00 | unit cost: 21.00 | cost: 231.00
+  Customer 82 | demand: 18.00
+    -> Facility 1 | amount: 12.00 | fraction: 0.67 | unit cost: 19.00 | cost: 228.00
+    -> Facility 26 | amount: 6.00 | fraction: 0.33 | unit cost: 16.00 | cost: 96.00
+  Customer 83 | demand: 10.00
+    -> Facility 24 | amount: 6.00 | fraction: 0.60 | unit cost: 16.00 | cost: 96.00
+    -> Facility 44 | amount: 4.00 | fraction: 0.40 | unit cost: 6.00 | cost: 24.00
+  Customer 84 | demand: 10.00
+    -> Facility 38 | amount: 2.00 | fraction: 0.20 | unit cost: 17.00 | cost: 34.00
+    -> Facility 31 | amount: 8.00 | fraction: 0.80 | unit cost: 13.00 | cost: 104.00
+  Customer 85 | demand: 8.00
+    -> Facility 41 | amount: 8.00 | fraction: 1.00 | unit cost: 13.00 | cost: 104.00
+  Customer 86 | demand: 18.00
+    -> Facility 41 | amount: 18.00 | fraction: 1.00 | unit cost: 9.00 | cost: 162.00
+  Customer 87 | demand: 5.00
+    -> Facility 27 | amount: 5.00 | fraction: 1.00 | unit cost: 3.00 | cost: 15.00
+  Customer 88 | demand: 15.00
+    -> Facility 2 | amount: 15.00 | fraction: 1.00 | unit cost: 4.00 | cost: 60.00
+  Customer 89 | demand: 17.00
+    -> Facility 43 | amount: 17.00 | fraction: 1.00 | unit cost: 7.00 | cost: 119.00
+  Customer 90 | demand: 15.00
+    -> Facility 38 | amount: 15.00 | fraction: 1.00 | unit cost: 12.00 | cost: 180.00
+  Customer 91 | demand: 19.00
+    -> Facility 33 | amount: 19.00 | fraction: 1.00 | unit cost: 8.00 | cost: 152.00
+  Customer 92 | demand: 17.00
+    -> Facility 43 | amount: 17.00 | fraction: 1.00 | unit cost: 4.00 | cost: 68.00
+  Customer 93 | demand: 6.00
+    -> Facility 27 | amount: 6.00 | fraction: 1.00 | unit cost: 7.00 | cost: 42.00
+  Customer 94 | demand: 20.00
+    -> Facility 48 | amount: 20.00 | fraction: 1.00 | unit cost: 4.00 | cost: 80.00
+  Customer 95 | demand: 12.00
+    -> Facility 29 | amount: 12.00 | fraction: 1.00 | unit cost: 11.00 | cost: 132.00
+  Customer 96 | demand: 15.00
+    -> Facility 29 | amount: 15.00 | fraction: 1.00 | unit cost: 8.00 | cost: 120.00
+  Customer 97 | demand: 10.00
+    -> Facility 47 | amount: 10.00 | fraction: 1.00 | unit cost: 5.00 | cost: 50.00
+  Customer 98 | demand: 14.00
+    -> Facility 20 | amount: 14.00 | fraction: 1.00 | unit cost: 3.00 | cost: 42.00
+  Customer 99 | demand: 15.00
+    -> Facility 42 | amount: 15.00 | fraction: 1.00 | unit cost: 7.00 | cost: 105.00
+  Customer 100 | demand: 16.00
+    -> Facility 6 | amount: 16.00 | fraction: 1.00 | unit cost: 8.00 | cost: 128.00
+  Customer 101 | demand: 11.00
+    -> Facility 24 | amount: 11.00 | fraction: 1.00 | unit cost: 6.00 | cost: 66.00
+  Customer 102 | demand: 12.00
+    -> Facility 27 | amount: 12.00 | fraction: 1.00 | unit cost: 14.00 | cost: 168.00
+  Customer 103 | demand: 10.00
+    -> Facility 13 | amount: 10.00 | fraction: 1.00 | unit cost: 7.00 | cost: 70.00
+  Customer 104 | demand: 6.00
+    -> Facility 41 | amount: 6.00 | fraction: 1.00 | unit cost: 4.00 | cost: 24.00
+  Customer 105 | demand: 14.00
+    -> Facility 29 | amount: 14.00 | fraction: 1.00 | unit cost: 7.00 | cost: 98.00
+  Customer 106 | demand: 16.00
+    -> Facility 43 | amount: 16.00 | fraction: 1.00 | unit cost: 17.00 | cost: 272.00
+  Customer 107 | demand: 13.00
+    -> Facility 43 | amount: 13.00 | fraction: 1.00 | unit cost: 19.00 | cost: 247.00
+  Customer 108 | demand: 6.00
+    -> Facility 49 | amount: 6.00 | fraction: 1.00 | unit cost: 5.00 | cost: 30.00
+  Customer 109 | demand: 10.00
+    -> Facility 23 | amount: 10.00 | fraction: 1.00 | unit cost: 5.00 | cost: 50.00
+  Customer 110 | demand: 20.00
+    -> Facility 21 | amount: 20.00 | fraction: 1.00 | unit cost: 13.00 | cost: 260.00
+  Customer 111 | demand: 10.00
+    -> Facility 2 | amount: 10.00 | fraction: 1.00 | unit cost: 13.00 | cost: 130.00
+  Customer 112 | demand: 8.00
+    -> Facility 14 | amount: 8.00 | fraction: 1.00 | unit cost: 16.00 | cost: 128.00
+  Customer 113 | demand: 14.00
+    -> Facility 32 | amount: 14.00 | fraction: 1.00 | unit cost: 20.00 | cost: 280.00
+  Customer 114 | demand: 16.00
+    -> Facility 42 | amount: 16.00 | fraction: 1.00 | unit cost: 9.00 | cost: 144.00
+
+============================================================
+Instance: wlp01.dzn
+Algorithm: grasp-gvns-rl
+LRC size: 15
+Execution: 1
+CPU time: 23.848593
+Fixed cost: 15640.00
+Transport cost: 14499.00
+Total cost: 30139.00
+Objective from scratch: 30139.00
+Open facilities: 29
+Incompatibility violations: 0
+Feasible: yes
+
+Open facilities detail:
+  Facility 2 | residual capacity: 0.00 | used capacity: 40.00
+  Facility 4 | residual capacity: 2.00 | used capacity: 48.00
+  Facility 6 | residual capacity: 0.00 | used capacity: 60.00
+  Facility 11 | residual capacity: 0.00 | used capacity: 30.00
+  Facility 12 | residual capacity: 0.00 | used capacity: 30.00
+  Facility 13 | residual capacity: 0.00 | used capacity: 40.00
+  Facility 14 | residual capacity: 9.00 | used capacity: 41.00
+  Facility 15 | residual capacity: 5.00 | used capacity: 65.00
+  Facility 18 | residual capacity: 0.00 | used capacity: 30.00
+  Facility 19 | residual capacity: 14.00 | used capacity: 36.00
+  Facility 20 | residual capacity: 0.00 | used capacity: 80.00
+  Facility 23 | residual capacity: 8.00 | used capacity: 52.00
+  Facility 24 | residual capacity: 27.00 | used capacity: 43.00
+  Facility 27 | residual capacity: 18.00 | used capacity: 22.00
+  Facility 31 | residual capacity: 20.00 | used capacity: 50.00
+  Facility 32 | residual capacity: 0.00 | used capacity: 80.00
+  Facility 33 | residual capacity: 0.00 | used capacity: 30.00
+  Facility 34 | residual capacity: 0.00 | used capacity: 30.00
+  Facility 36 | residual capacity: 0.00 | used capacity: 40.00
+  Facility 38 | residual capacity: 0.00 | used capacity: 50.00
+  Facility 40 | residual capacity: 16.00 | used capacity: 44.00
+  Facility 41 | residual capacity: 2.00 | used capacity: 68.00
+  Facility 42 | residual capacity: 0.00 | used capacity: 60.00
+  Facility 43 | residual capacity: 20.00 | used capacity: 70.00
+  Facility 44 | residual capacity: 0.00 | used capacity: 30.00
+  Facility 45 | residual capacity: 0.00 | used capacity: 80.00
+  Facility 47 | residual capacity: 0.00 | used capacity: 40.00
+  Facility 48 | residual capacity: 9.00 | used capacity: 91.00
+  Facility 49 | residual capacity: 0.00 | used capacity: 80.00
+
+Customer assignments:
+  Customer 0 | demand: 18.00
+    -> Facility 20 | amount: 18.00 | fraction: 1.00 | unit cost: 14.00 | cost: 252.00
+  Customer 1 | demand: 9.00
+    -> Facility 44 | amount: 9.00 | fraction: 1.00 | unit cost: 3.00 | cost: 27.00
+  Customer 2 | demand: 20.00
+    -> Facility 32 | amount: 18.00 | fraction: 0.90 | unit cost: 16.00 | cost: 288.00
+    -> Facility 20 | amount: 2.00 | fraction: 0.10 | unit cost: 14.00 | cost: 28.00
+  Customer 3 | demand: 13.00
+    -> Facility 6 | amount: 13.00 | fraction: 1.00 | unit cost: 6.00 | cost: 78.00
+  Customer 4 | demand: 12.00
+    -> Facility 41 | amount: 12.00 | fraction: 1.00 | unit cost: 8.00 | cost: 96.00
+  Customer 5 | demand: 11.00
+    -> Facility 6 | amount: 11.00 | fraction: 1.00 | unit cost: 5.00 | cost: 55.00
+  Customer 6 | demand: 9.00
+    -> Facility 19 | amount: 9.00 | fraction: 1.00 | unit cost: 11.00 | cost: 99.00
+  Customer 7 | demand: 5.00
+    -> Facility 11 | amount: 5.00 | fraction: 1.00 | unit cost: 21.00 | cost: 105.00
+  Customer 8 | demand: 9.00
+    -> Facility 27 | amount: 9.00 | fraction: 1.00 | unit cost: 6.00 | cost: 54.00
+  Customer 9 | demand: 10.00
+    -> Facility 48 | amount: 10.00 | fraction: 1.00 | unit cost: 10.00 | cost: 100.00
+  Customer 10 | demand: 17.00
+    -> Facility 14 | amount: 17.00 | fraction: 1.00 | unit cost: 12.00 | cost: 204.00
+  Customer 11 | demand: 20.00
+    -> Facility 42 | amount: 15.00 | fraction: 0.75 | unit cost: 13.00 | cost: 195.00
+    -> Facility 48 | amount: 5.00 | fraction: 0.25 | unit cost: 16.00 | cost: 80.00
+  Customer 12 | demand: 17.00
+    -> Facility 11 | amount: 3.00 | fraction: 0.18 | unit cost: 13.00 | cost: 39.00
+    -> Facility 12 | amount: 14.00 | fraction: 0.82 | unit cost: 14.00 | cost: 196.00
+  Customer 13 | demand: 17.00
+    -> Facility 4 | amount: 17.00 | fraction: 1.00 | unit cost: 10.00 | cost: 170.00
+  Customer 14 | demand: 17.00
+    -> Facility 18 | amount: 17.00 | fraction: 1.00 | unit cost: 5.00 | cost: 85.00
+  Customer 15 | demand: 12.00
+    -> Facility 48 | amount: 12.00 | fraction: 1.00 | unit cost: 13.00 | cost: 156.00
+  Customer 16 | demand: 7.00
+    -> Facility 45 | amount: 2.00 | fraction: 0.29 | unit cost: 16.00 | cost: 32.00
+    -> Facility 13 | amount: 5.00 | fraction: 0.71 | unit cost: 18.00 | cost: 90.00
+  Customer 17 | demand: 7.00
+    -> Facility 45 | amount: 7.00 | fraction: 1.00 | unit cost: 15.00 | cost: 105.00
+  Customer 18 | demand: 5.00
+    -> Facility 31 | amount: 5.00 | fraction: 1.00 | unit cost: 13.00 | cost: 65.00
+  Customer 19 | demand: 9.00
+    -> Facility 49 | amount: 9.00 | fraction: 1.00 | unit cost: 8.00 | cost: 72.00
+  Customer 20 | demand: 7.00
+    -> Facility 40 | amount: 7.00 | fraction: 1.00 | unit cost: 15.00 | cost: 105.00
+  Customer 21 | demand: 9.00
+    -> Facility 47 | amount: 9.00 | fraction: 1.00 | unit cost: 4.00 | cost: 36.00
+  Customer 22 | demand: 12.00
+    -> Facility 44 | amount: 6.00 | fraction: 0.50 | unit cost: 12.00 | cost: 72.00
+    -> Facility 23 | amount: 6.00 | fraction: 0.50 | unit cost: 22.00 | cost: 132.00
+  Customer 23 | demand: 12.00
+    -> Facility 32 | amount: 12.00 | fraction: 1.00 | unit cost: 7.00 | cost: 84.00
+  Customer 24 | demand: 17.00
+    -> Facility 49 | amount: 17.00 | fraction: 1.00 | unit cost: 11.00 | cost: 187.00
+  Customer 25 | demand: 13.00
+    -> Facility 45 | amount: 13.00 | fraction: 1.00 | unit cost: 8.00 | cost: 104.00
+  Customer 26 | demand: 10.00
+    -> Facility 33 | amount: 10.00 | fraction: 1.00 | unit cost: 9.00 | cost: 90.00
+  Customer 27 | demand: 19.00
+    -> Facility 48 | amount: 19.00 | fraction: 1.00 | unit cost: 9.00 | cost: 171.00
+  Customer 28 | demand: 11.00
+    -> Facility 31 | amount: 11.00 | fraction: 1.00 | unit cost: 4.00 | cost: 44.00
+  Customer 29 | demand: 15.00
+    -> Facility 18 | amount: 13.00 | fraction: 0.87 | unit cost: 3.00 | cost: 39.00
+    -> Facility 45 | amount: 2.00 | fraction: 0.13 | unit cost: 14.00 | cost: 28.00
+  Customer 30 | demand: 7.00
+    -> Facility 48 | amount: 7.00 | fraction: 1.00 | unit cost: 9.00 | cost: 63.00
+  Customer 31 | demand: 7.00
+    -> Facility 45 | amount: 7.00 | fraction: 1.00 | unit cost: 13.00 | cost: 91.00
+  Customer 32 | demand: 19.00
+    -> Facility 23 | amount: 19.00 | fraction: 1.00 | unit cost: 16.00 | cost: 304.00
+  Customer 33 | demand: 5.00
+    -> Facility 44 | amount: 5.00 | fraction: 1.00 | unit cost: 4.00 | cost: 20.00
+  Customer 34 | demand: 20.00
+    -> Facility 41 | amount: 20.00 | fraction: 1.00 | unit cost: 10.00 | cost: 200.00
+  Customer 35 | demand: 8.00
+    -> Facility 41 | amount: 8.00 | fraction: 1.00 | unit cost: 13.00 | cost: 104.00
+  Customer 36 | demand: 14.00
+    -> Facility 41 | amount: 14.00 | fraction: 1.00 | unit cost: 4.00 | cost: 56.00
+  Customer 37 | demand: 12.00
+    -> Facility 40 | amount: 12.00 | fraction: 1.00 | unit cost: 5.00 | cost: 60.00
+  Customer 38 | demand: 9.00
+    -> Facility 42 | amount: 9.00 | fraction: 1.00 | unit cost: 13.00 | cost: 117.00
+  Customer 39 | demand: 19.00
+    -> Facility 15 | amount: 19.00 | fraction: 1.00 | unit cost: 8.00 | cost: 152.00
+  Customer 40 | demand: 9.00
+    -> Facility 45 | amount: 9.00 | fraction: 1.00 | unit cost: 21.00 | cost: 189.00
+  Customer 41 | demand: 16.00
+    -> Facility 49 | amount: 16.00 | fraction: 1.00 | unit cost: 26.00 | cost: 416.00
+  Customer 42 | demand: 19.00
+    -> Facility 45 | amount: 18.00 | fraction: 0.95 | unit cost: 16.00 | cost: 288.00
+    -> Facility 33 | amount: 1.00 | fraction: 0.05 | unit cost: 15.00 | cost: 15.00
+  Customer 43 | demand: 7.00
+    -> Facility 40 | amount: 7.00 | fraction: 1.00 | unit cost: 10.00 | cost: 70.00
+  Customer 44 | demand: 10.00
+    -> Facility 2 | amount: 10.00 | fraction: 1.00 | unit cost: 12.00 | cost: 120.00
+  Customer 45 | demand: 5.00
+    -> Facility 6 | amount: 5.00 | fraction: 1.00 | unit cost: 14.00 | cost: 70.00
+  Customer 46 | demand: 14.00
+    -> Facility 24 | amount: 14.00 | fraction: 1.00 | unit cost: 7.00 | cost: 98.00
+  Customer 47 | demand: 8.00
+    -> Facility 13 | amount: 8.00 | fraction: 1.00 | unit cost: 10.00 | cost: 80.00
+  Customer 48 | demand: 5.00
+    -> Facility 15 | amount: 5.00 | fraction: 1.00 | unit cost: 3.00 | cost: 15.00
+  Customer 49 | demand: 20.00
+    -> Facility 11 | amount: 4.00 | fraction: 0.20 | unit cost: 17.00 | cost: 68.00
+    -> Facility 49 | amount: 16.00 | fraction: 0.80 | unit cost: 16.00 | cost: 256.00
+  Customer 50 | demand: 13.00
+    -> Facility 32 | amount: 13.00 | fraction: 1.00 | unit cost: 23.00 | cost: 299.00
+  Customer 51 | demand: 18.00
+    -> Facility 45 | amount: 18.00 | fraction: 1.00 | unit cost: 14.00 | cost: 252.00
+  Customer 52 | demand: 5.00
+    -> Facility 36 | amount: 5.00 | fraction: 1.00 | unit cost: 12.00 | cost: 60.00
+  Customer 53 | demand: 8.00
+    -> Facility 47 | amount: 8.00 | fraction: 1.00 | unit cost: 4.00 | cost: 32.00
+  Customer 54 | demand: 16.00
+    -> Facility 49 | amount: 16.00 | fraction: 1.00 | unit cost: 3.00 | cost: 48.00
+  Customer 55 | demand: 17.00
+    -> Facility 19 | amount: 2.00 | fraction: 0.12 | unit cost: 8.00 | cost: 16.00
+    -> Facility 2 | amount: 15.00 | fraction: 0.88 | unit cost: 6.00 | cost: 90.00
+  Customer 56 | demand: 5.00
+    -> Facility 42 | amount: 5.00 | fraction: 1.00 | unit cost: 6.00 | cost: 30.00
+  Customer 57 | demand: 14.00
+    -> Facility 38 | amount: 14.00 | fraction: 1.00 | unit cost: 1.00 | cost: 14.00
+  Customer 58 | demand: 11.00
+    -> Facility 23 | amount: 11.00 | fraction: 1.00 | unit cost: 10.00 | cost: 110.00
+  Customer 59 | demand: 17.00
+    -> Facility 47 | amount: 17.00 | fraction: 1.00 | unit cost: 3.00 | cost: 51.00
+  Customer 60 | demand: 15.00
+    -> Facility 6 | amount: 15.00 | fraction: 1.00 | unit cost: 8.00 | cost: 120.00
+  Customer 61 | demand: 7.00
+    -> Facility 20 | amount: 7.00 | fraction: 1.00 | unit cost: 5.00 | cost: 35.00
+  Customer 62 | demand: 18.00
+    -> Facility 40 | amount: 18.00 | fraction: 1.00 | unit cost: 4.00 | cost: 72.00
+  Customer 63 | demand: 19.00
+    -> Facility 19 | amount: 19.00 | fraction: 1.00 | unit cost: 14.00 | cost: 266.00
+  Customer 64 | demand: 18.00
+    -> Facility 48 | amount: 18.00 | fraction: 1.00 | unit cost: 19.00 | cost: 342.00
+  Customer 65 | demand: 11.00
+    -> Facility 4 | amount: 9.00 | fraction: 0.82 | unit cost: 11.00 | cost: 99.00
+    -> Facility 12 | amount: 2.00 | fraction: 0.18 | unit cost: 9.00 | cost: 18.00
+  Customer 66 | demand: 10.00
+    -> Facility 20 | amount: 10.00 | fraction: 1.00 | unit cost: 1.00 | cost: 10.00
+  Customer 67 | demand: 16.00
+    -> Facility 13 | amount: 16.00 | fraction: 1.00 | unit cost: 6.00 | cost: 96.00
+  Customer 68 | demand: 18.00
+    -> Facility 24 | amount: 18.00 | fraction: 1.00 | unit cost: 14.00 | cost: 252.00
+  Customer 69 | demand: 18.00
+    -> Facility 32 | amount: 18.00 | fraction: 1.00 | unit cost: 11.00 | cost: 198.00
+  Customer 70 | demand: 16.00
+    -> Facility 14 | amount: 16.00 | fraction: 1.00 | unit cost: 6.00 | cost: 96.00
+  Customer 71 | demand: 7.00
+    -> Facility 43 | amount: 7.00 | fraction: 1.00 | unit cost: 6.00 | cost: 42.00
+  Customer 72 | demand: 18.00
+    -> Facility 15 | amount: 18.00 | fraction: 1.00 | unit cost: 4.00 | cost: 72.00
+  Customer 73 | demand: 19.00
+    -> Facility 38 | amount: 19.00 | fraction: 1.00 | unit cost: 1.00 | cost: 19.00
+  Customer 74 | demand: 14.00
+    -> Facility 31 | amount: 14.00 | fraction: 1.00 | unit cost: 9.00 | cost: 126.00
+  Customer 75 | demand: 6.00
+    -> Facility 23 | amount: 6.00 | fraction: 1.00 | unit cost: 1.00 | cost: 6.00
+  Customer 76 | demand: 6.00
+    -> Facility 32 | amount: 5.00 | fraction: 0.83 | unit cost: 18.00 | cost: 90.00
+    -> Facility 13 | amount: 1.00 | fraction: 0.17 | unit cost: 14.00 | cost: 14.00
+  Customer 77 | demand: 20.00
+    -> Facility 31 | amount: 20.00 | fraction: 1.00 | unit cost: 9.00 | cost: 180.00
+  Customer 78 | demand: 13.00
+    -> Facility 15 | amount: 13.00 | fraction: 1.00 | unit cost: 5.00 | cost: 65.00
+  Customer 79 | demand: 16.00
+    -> Facility 12 | amount: 14.00 | fraction: 0.88 | unit cost: 7.00 | cost: 98.00
+    -> Facility 38 | amount: 2.00 | fraction: 0.12 | unit cost: 5.00 | cost: 10.00
+  Customer 80 | demand: 12.00
+    -> Facility 4 | amount: 12.00 | fraction: 1.00 | unit cost: 13.00 | cost: 156.00
+  Customer 81 | demand: 11.00
+    -> Facility 20 | amount: 11.00 | fraction: 1.00 | unit cost: 21.00 | cost: 231.00
+  Customer 82 | demand: 18.00
+    -> Facility 11 | amount: 18.00 | fraction: 1.00 | unit cost: 13.00 | cost: 234.00
+  Customer 83 | demand: 10.00
+    -> Facility 44 | amount: 10.00 | fraction: 1.00 | unit cost: 6.00 | cost: 60.00
+  Customer 84 | demand: 10.00
+    -> Facility 4 | amount: 10.00 | fraction: 1.00 | unit cost: 9.00 | cost: 90.00
+  Customer 85 | demand: 8.00
+    -> Facility 41 | amount: 8.00 | fraction: 1.00 | unit cost: 13.00 | cost: 104.00
+  Customer 86 | demand: 18.00
+    -> Facility 20 | amount: 18.00 | fraction: 1.00 | unit cost: 8.00 | cost: 144.00
+  Customer 87 | demand: 5.00
+    -> Facility 27 | amount: 5.00 | fraction: 1.00 | unit cost: 3.00 | cost: 15.00
+  Customer 88 | demand: 15.00
+    -> Facility 2 | amount: 15.00 | fraction: 1.00 | unit cost: 4.00 | cost: 60.00
+  Customer 89 | demand: 17.00
+    -> Facility 43 | amount: 17.00 | fraction: 1.00 | unit cost: 7.00 | cost: 119.00
+  Customer 90 | demand: 15.00
+    -> Facility 38 | amount: 15.00 | fraction: 1.00 | unit cost: 12.00 | cost: 180.00
+  Customer 91 | demand: 19.00
+    -> Facility 33 | amount: 19.00 | fraction: 1.00 | unit cost: 8.00 | cost: 152.00
+  Customer 92 | demand: 17.00
+    -> Facility 43 | amount: 17.00 | fraction: 1.00 | unit cost: 4.00 | cost: 68.00
+  Customer 93 | demand: 6.00
+    -> Facility 27 | amount: 6.00 | fraction: 1.00 | unit cost: 7.00 | cost: 42.00
+  Customer 94 | demand: 20.00
+    -> Facility 48 | amount: 20.00 | fraction: 1.00 | unit cost: 4.00 | cost: 80.00
+  Customer 95 | demand: 12.00
+    -> Facility 36 | amount: 12.00 | fraction: 1.00 | unit cost: 14.00 | cost: 168.00
+  Customer 96 | demand: 15.00
+    -> Facility 36 | amount: 15.00 | fraction: 1.00 | unit cost: 13.00 | cost: 195.00
+  Customer 97 | demand: 10.00
+    -> Facility 47 | amount: 6.00 | fraction: 0.60 | unit cost: 5.00 | cost: 30.00
+    -> Facility 45 | amount: 4.00 | fraction: 0.40 | unit cost: 9.00 | cost: 36.00
+  Customer 98 | demand: 14.00
+    -> Facility 20 | amount: 14.00 | fraction: 1.00 | unit cost: 3.00 | cost: 42.00
+  Customer 99 | demand: 15.00
+    -> Facility 42 | amount: 15.00 | fraction: 1.00 | unit cost: 7.00 | cost: 105.00
+  Customer 100 | demand: 16.00
+    -> Facility 6 | amount: 16.00 | fraction: 1.00 | unit cost: 8.00 | cost: 128.00
+  Customer 101 | demand: 11.00
+    -> Facility 24 | amount: 11.00 | fraction: 1.00 | unit cost: 6.00 | cost: 66.00
+  Customer 102 | demand: 12.00
+    -> Facility 34 | amount: 10.00 | fraction: 0.83 | unit cost: 12.00 | cost: 120.00
+    -> Facility 27 | amount: 2.00 | fraction: 0.17 | unit cost: 14.00 | cost: 28.00
+  Customer 103 | demand: 10.00
+    -> Facility 13 | amount: 10.00 | fraction: 1.00 | unit cost: 7.00 | cost: 70.00
+  Customer 104 | demand: 6.00
+    -> Facility 41 | amount: 6.00 | fraction: 1.00 | unit cost: 4.00 | cost: 24.00
+  Customer 105 | demand: 14.00
+    -> Facility 19 | amount: 6.00 | fraction: 0.43 | unit cost: 23.00 | cost: 138.00
+    -> Facility 36 | amount: 8.00 | fraction: 0.57 | unit cost: 15.00 | cost: 120.00
+  Customer 106 | demand: 16.00
+    -> Facility 43 | amount: 16.00 | fraction: 1.00 | unit cost: 17.00 | cost: 272.00
+  Customer 107 | demand: 13.00
+    -> Facility 43 | amount: 13.00 | fraction: 1.00 | unit cost: 19.00 | cost: 247.00
+  Customer 108 | demand: 6.00
+    -> Facility 49 | amount: 6.00 | fraction: 1.00 | unit cost: 5.00 | cost: 30.00
+  Customer 109 | demand: 10.00
+    -> Facility 23 | amount: 10.00 | fraction: 1.00 | unit cost: 5.00 | cost: 50.00
+  Customer 110 | demand: 20.00
+    -> Facility 34 | amount: 20.00 | fraction: 1.00 | unit cost: 14.00 | cost: 280.00
+  Customer 111 | demand: 10.00
+    -> Facility 15 | amount: 10.00 | fraction: 1.00 | unit cost: 12.00 | cost: 120.00
+  Customer 112 | demand: 8.00
+    -> Facility 14 | amount: 8.00 | fraction: 1.00 | unit cost: 16.00 | cost: 128.00
+  Customer 113 | demand: 14.00
+    -> Facility 32 | amount: 14.00 | fraction: 1.00 | unit cost: 20.00 | cost: 280.00
+  Customer 114 | demand: 16.00
+    -> Facility 42 | amount: 16.00 | fraction: 1.00 | unit cost: 9.00 | cost: 144.00
+
+============================================================
+Instance: wlp01.dzn
+Algorithm: grasp-gvns-rl
+LRC size: 40
+Execution: 1
+CPU time: 28.355402
+Fixed cost: 15440.00
+Transport cost: 14317.00
+Total cost: 29757.00
+Objective from scratch: 29757.00
+Open facilities: 27
+Incompatibility violations: 0
+Feasible: yes
+
+Open facilities detail:
+  Facility 4 | residual capacity: 0.00 | used capacity: 50.00
+  Facility 6 | residual capacity: 0.00 | used capacity: 60.00
+  Facility 7 | residual capacity: 13.00 | used capacity: 37.00
+  Facility 13 | residual capacity: 0.00 | used capacity: 40.00
+  Facility 14 | residual capacity: 4.00 | used capacity: 46.00
+  Facility 18 | residual capacity: 0.00 | used capacity: 30.00
+  Facility 19 | residual capacity: 0.00 | used capacity: 50.00
+  Facility 20 | residual capacity: 0.00 | used capacity: 80.00
+  Facility 21 | residual capacity: 3.00 | used capacity: 67.00
+  Facility 23 | residual capacity: 0.00 | used capacity: 60.00
+  Facility 24 | residual capacity: 21.00 | used capacity: 49.00
+  Facility 26 | residual capacity: 0.00 | used capacity: 70.00
+  Facility 27 | residual capacity: 8.00 | used capacity: 32.00
+  Facility 29 | residual capacity: 5.00 | used capacity: 75.00
+  Facility 31 | residual capacity: 0.00 | used capacity: 70.00
+  Facility 32 | residual capacity: 27.00 | used capacity: 53.00
+  Facility 33 | residual capacity: 0.00 | used capacity: 30.00
+  Facility 34 | residual capacity: 0.00 | used capacity: 30.00
+  Facility 38 | residual capacity: 0.00 | used capacity: 50.00
+  Facility 40 | residual capacity: 16.00 | used capacity: 44.00
+  Facility 41 | residual capacity: 4.00 | used capacity: 66.00
+  Facility 42 | residual capacity: 0.00 | used capacity: 60.00
+  Facility 44 | residual capacity: 0.00 | used capacity: 30.00
+  Facility 45 | residual capacity: 0.00 | used capacity: 80.00
+  Facility 47 | residual capacity: 0.00 | used capacity: 40.00
+  Facility 48 | residual capacity: 13.00 | used capacity: 87.00
+  Facility 49 | residual capacity: 6.00 | used capacity: 74.00
+
+Customer assignments:
+  Customer 0 | demand: 18.00
+    -> Facility 20 | amount: 18.00 | fraction: 1.00 | unit cost: 14.00 | cost: 252.00
+  Customer 1 | demand: 9.00
+    -> Facility 44 | amount: 9.00 | fraction: 1.00 | unit cost: 3.00 | cost: 27.00
+  Customer 2 | demand: 20.00
+    -> Facility 20 | amount: 20.00 | fraction: 1.00 | unit cost: 14.00 | cost: 280.00
+  Customer 3 | demand: 13.00
+    -> Facility 6 | amount: 13.00 | fraction: 1.00 | unit cost: 6.00 | cost: 78.00
+  Customer 4 | demand: 12.00
+    -> Facility 41 | amount: 12.00 | fraction: 1.00 | unit cost: 8.00 | cost: 96.00
+  Customer 5 | demand: 11.00
+    -> Facility 6 | amount: 11.00 | fraction: 1.00 | unit cost: 5.00 | cost: 55.00
+  Customer 6 | demand: 9.00
+    -> Facility 19 | amount: 9.00 | fraction: 1.00 | unit cost: 11.00 | cost: 99.00
+  Customer 7 | demand: 5.00
+    -> Facility 26 | amount: 5.00 | fraction: 1.00 | unit cost: 16.00 | cost: 80.00
+  Customer 8 | demand: 9.00
+    -> Facility 27 | amount: 9.00 | fraction: 1.00 | unit cost: 6.00 | cost: 54.00
+  Customer 9 | demand: 10.00
+    -> Facility 48 | amount: 10.00 | fraction: 1.00 | unit cost: 10.00 | cost: 100.00
+  Customer 10 | demand: 17.00
+    -> Facility 14 | amount: 17.00 | fraction: 1.00 | unit cost: 12.00 | cost: 204.00
+  Customer 11 | demand: 20.00
+    -> Facility 42 | amount: 20.00 | fraction: 1.00 | unit cost: 13.00 | cost: 260.00
+  Customer 12 | demand: 17.00
+    -> Facility 26 | amount: 17.00 | fraction: 1.00 | unit cost: 9.00 | cost: 153.00
+  Customer 13 | demand: 17.00
+    -> Facility 14 | amount: 5.00 | fraction: 0.29 | unit cost: 18.00 | cost: 90.00
+    -> Facility 31 | amount: 9.00 | fraction: 0.53 | unit cost: 13.00 | cost: 117.00
+    -> Facility 4 | amount: 3.00 | fraction: 0.18 | unit cost: 10.00 | cost: 30.00
+  Customer 14 | demand: 17.00
+    -> Facility 18 | amount: 17.00 | fraction: 1.00 | unit cost: 5.00 | cost: 85.00
+  Customer 15 | demand: 12.00
+    -> Facility 21 | amount: 12.00 | fraction: 1.00 | unit cost: 10.00 | cost: 120.00
+  Customer 16 | demand: 7.00
+    -> Facility 18 | amount: 7.00 | fraction: 1.00 | unit cost: 11.00 | cost: 77.00
+  Customer 17 | demand: 7.00
+    -> Facility 45 | amount: 7.00 | fraction: 1.00 | unit cost: 15.00 | cost: 105.00
+  Customer 18 | demand: 5.00
+    -> Facility 21 | amount: 5.00 | fraction: 1.00 | unit cost: 17.00 | cost: 85.00
+  Customer 19 | demand: 9.00
+    -> Facility 49 | amount: 9.00 | fraction: 1.00 | unit cost: 8.00 | cost: 72.00
+  Customer 20 | demand: 7.00
+    -> Facility 40 | amount: 7.00 | fraction: 1.00 | unit cost: 15.00 | cost: 105.00
+  Customer 21 | demand: 9.00
+    -> Facility 47 | amount: 9.00 | fraction: 1.00 | unit cost: 4.00 | cost: 36.00
+  Customer 22 | demand: 12.00
+    -> Facility 44 | amount: 12.00 | fraction: 1.00 | unit cost: 12.00 | cost: 144.00
+  Customer 23 | demand: 12.00
+    -> Facility 32 | amount: 12.00 | fraction: 1.00 | unit cost: 7.00 | cost: 84.00
+  Customer 24 | demand: 17.00
+    -> Facility 49 | amount: 17.00 | fraction: 1.00 | unit cost: 11.00 | cost: 187.00
+  Customer 25 | demand: 13.00
+    -> Facility 45 | amount: 13.00 | fraction: 1.00 | unit cost: 8.00 | cost: 104.00
+  Customer 26 | demand: 10.00
+    -> Facility 33 | amount: 10.00 | fraction: 1.00 | unit cost: 9.00 | cost: 90.00
+  Customer 27 | demand: 19.00
+    -> Facility 48 | amount: 15.00 | fraction: 0.79 | unit cost: 9.00 | cost: 135.00
+    -> Facility 42 | amount: 4.00 | fraction: 0.21 | unit cost: 6.00 | cost: 24.00
+  Customer 28 | demand: 11.00
+    -> Facility 31 | amount: 11.00 | fraction: 1.00 | unit cost: 4.00 | cost: 44.00
+  Customer 29 | demand: 15.00
+    -> Facility 29 | amount: 9.00 | fraction: 0.60 | unit cost: 13.00 | cost: 117.00
+    -> Facility 18 | amount: 6.00 | fraction: 0.40 | unit cost: 3.00 | cost: 18.00
+  Customer 30 | demand: 7.00
+    -> Facility 48 | amount: 7.00 | fraction: 1.00 | unit cost: 9.00 | cost: 63.00
+  Customer 31 | demand: 7.00
+    -> Facility 45 | amount: 7.00 | fraction: 1.00 | unit cost: 13.00 | cost: 91.00
+  Customer 32 | demand: 19.00
+    -> Facility 23 | amount: 9.00 | fraction: 0.47 | unit cost: 16.00 | cost: 144.00
+    -> Facility 21 | amount: 10.00 | fraction: 0.53 | unit cost: 19.00 | cost: 190.00
+  Customer 33 | demand: 5.00
+    -> Facility 44 | amount: 5.00 | fraction: 1.00 | unit cost: 4.00 | cost: 20.00
+  Customer 34 | demand: 20.00
+    -> Facility 26 | amount: 10.00 | fraction: 0.50 | unit cost: 10.00 | cost: 100.00
+    -> Facility 49 | amount: 10.00 | fraction: 0.50 | unit cost: 17.00 | cost: 170.00
+  Customer 35 | demand: 8.00
+    -> Facility 41 | amount: 8.00 | fraction: 1.00 | unit cost: 13.00 | cost: 104.00
+  Customer 36 | demand: 14.00
+    -> Facility 41 | amount: 14.00 | fraction: 1.00 | unit cost: 4.00 | cost: 56.00
+  Customer 37 | demand: 12.00
+    -> Facility 40 | amount: 12.00 | fraction: 1.00 | unit cost: 5.00 | cost: 60.00
+  Customer 38 | demand: 9.00
+    -> Facility 21 | amount: 9.00 | fraction: 1.00 | unit cost: 13.00 | cost: 117.00
+  Customer 39 | demand: 19.00
+    -> Facility 34 | amount: 19.00 | fraction: 1.00 | unit cost: 5.00 | cost: 95.00
+  Customer 40 | demand: 9.00
+    -> Facility 32 | amount: 9.00 | fraction: 1.00 | unit cost: 23.00 | cost: 207.00
+  Customer 41 | demand: 16.00
+    -> Facility 49 | amount: 16.00 | fraction: 1.00 | unit cost: 26.00 | cost: 416.00
+  Customer 42 | demand: 19.00
+    -> Facility 45 | amount: 19.00 | fraction: 1.00 | unit cost: 16.00 | cost: 304.00
+  Customer 43 | demand: 7.00
+    -> Facility 40 | amount: 7.00 | fraction: 1.00 | unit cost: 10.00 | cost: 70.00
+  Customer 44 | demand: 10.00
+    -> Facility 19 | amount: 9.00 | fraction: 0.90 | unit cost: 14.00 | cost: 126.00
+    -> Facility 29 | amount: 1.00 | fraction: 0.10 | unit cost: 18.00 | cost: 18.00
+  Customer 45 | demand: 5.00
+    -> Facility 6 | amount: 5.00 | fraction: 1.00 | unit cost: 14.00 | cost: 70.00
+  Customer 46 | demand: 14.00
+    -> Facility 24 | amount: 14.00 | fraction: 1.00 | unit cost: 7.00 | cost: 98.00
+  Customer 47 | demand: 8.00
+    -> Facility 13 | amount: 8.00 | fraction: 1.00 | unit cost: 10.00 | cost: 80.00
+  Customer 48 | demand: 5.00
+    -> Facility 23 | amount: 5.00 | fraction: 1.00 | unit cost: 7.00 | cost: 35.00
+  Customer 49 | demand: 20.00
+    -> Facility 26 | amount: 20.00 | fraction: 1.00 | unit cost: 7.00 | cost: 140.00
+  Customer 50 | demand: 13.00
+    -> Facility 45 | amount: 12.00 | fraction: 0.92 | unit cost: 20.00 | cost: 240.00
+    -> Facility 33 | amount: 1.00 | fraction: 0.08 | unit cost: 13.00 | cost: 13.00
+  Customer 51 | demand: 18.00
+    -> Facility 45 | amount: 18.00 | fraction: 1.00 | unit cost: 14.00 | cost: 252.00
+  Customer 52 | demand: 5.00
+    -> Facility 29 | amount: 5.00 | fraction: 1.00 | unit cost: 5.00 | cost: 25.00
+  Customer 53 | demand: 8.00
+    -> Facility 47 | amount: 8.00 | fraction: 1.00 | unit cost: 4.00 | cost: 32.00
+  Customer 54 | demand: 16.00
+    -> Facility 49 | amount: 16.00 | fraction: 1.00 | unit cost: 3.00 | cost: 48.00
+  Customer 55 | demand: 17.00
+    -> Facility 19 | amount: 17.00 | fraction: 1.00 | unit cost: 8.00 | cost: 136.00
+  Customer 56 | demand: 5.00
+    -> Facility 42 | amount: 5.00 | fraction: 1.00 | unit cost: 6.00 | cost: 30.00
+  Customer 57 | demand: 14.00
+    -> Facility 38 | amount: 14.00 | fraction: 1.00 | unit cost: 1.00 | cost: 14.00
+  Customer 58 | demand: 11.00
+    -> Facility 21 | amount: 11.00 | fraction: 1.00 | unit cost: 4.00 | cost: 44.00
+  Customer 59 | demand: 17.00
+    -> Facility 47 | amount: 17.00 | fraction: 1.00 | unit cost: 3.00 | cost: 51.00
+  Customer 60 | demand: 15.00
+    -> Facility 6 | amount: 15.00 | fraction: 1.00 | unit cost: 8.00 | cost: 120.00
+  Customer 61 | demand: 7.00
+    -> Facility 20 | amount: 7.00 | fraction: 1.00 | unit cost: 5.00 | cost: 35.00
+  Customer 62 | demand: 18.00
+    -> Facility 40 | amount: 18.00 | fraction: 1.00 | unit cost: 4.00 | cost: 72.00
+  Customer 63 | demand: 19.00
+    -> Facility 29 | amount: 19.00 | fraction: 1.00 | unit cost: 17.00 | cost: 323.00
+  Customer 64 | demand: 18.00
+    -> Facility 48 | amount: 18.00 | fraction: 1.00 | unit cost: 19.00 | cost: 342.00
+  Customer 65 | demand: 11.00
+    -> Facility 4 | amount: 11.00 | fraction: 1.00 | unit cost: 11.00 | cost: 121.00
+  Customer 66 | demand: 10.00
+    -> Facility 20 | amount: 10.00 | fraction: 1.00 | unit cost: 1.00 | cost: 10.00
+  Customer 67 | demand: 16.00
+    -> Facility 13 | amount: 16.00 | fraction: 1.00 | unit cost: 6.00 | cost: 96.00
+  Customer 68 | demand: 18.00
+    -> Facility 24 | amount: 18.00 | fraction: 1.00 | unit cost: 14.00 | cost: 252.00
+  Customer 69 | demand: 18.00
+    -> Facility 32 | amount: 18.00 | fraction: 1.00 | unit cost: 11.00 | cost: 198.00
+  Customer 70 | demand: 16.00
+    -> Facility 14 | amount: 16.00 | fraction: 1.00 | unit cost: 6.00 | cost: 96.00
+  Customer 71 | demand: 7.00
+    -> Facility 7 | amount: 7.00 | fraction: 1.00 | unit cost: 12.00 | cost: 84.00
+  Customer 72 | demand: 18.00
+    -> Facility 23 | amount: 18.00 | fraction: 1.00 | unit cost: 7.00 | cost: 126.00
+  Customer 73 | demand: 19.00
+    -> Facility 38 | amount: 19.00 | fraction: 1.00 | unit cost: 1.00 | cost: 19.00
+  Customer 74 | demand: 14.00
+    -> Facility 31 | amount: 14.00 | fraction: 1.00 | unit cost: 9.00 | cost: 126.00
+  Customer 75 | demand: 6.00
+    -> Facility 23 | amount: 6.00 | fraction: 1.00 | unit cost: 1.00 | cost: 6.00
+  Customer 76 | demand: 6.00
+    -> Facility 13 | amount: 6.00 | fraction: 1.00 | unit cost: 14.00 | cost: 84.00
+  Customer 77 | demand: 20.00
+    -> Facility 31 | amount: 20.00 | fraction: 1.00 | unit cost: 9.00 | cost: 180.00
+  Customer 78 | demand: 13.00
+    -> Facility 23 | amount: 12.00 | fraction: 0.92 | unit cost: 9.00 | cost: 108.00
+    -> Facility 34 | amount: 1.00 | fraction: 0.08 | unit cost: 7.00 | cost: 7.00
+  Customer 79 | demand: 16.00
+    -> Facility 38 | amount: 16.00 | fraction: 1.00 | unit cost: 5.00 | cost: 80.00
+  Customer 80 | demand: 12.00
+    -> Facility 4 | amount: 12.00 | fraction: 1.00 | unit cost: 13.00 | cost: 156.00
+  Customer 81 | demand: 11.00
+    -> Facility 20 | amount: 11.00 | fraction: 1.00 | unit cost: 21.00 | cost: 231.00
+  Customer 82 | demand: 18.00
+    -> Facility 26 | amount: 18.00 | fraction: 1.00 | unit cost: 16.00 | cost: 288.00
+  Customer 83 | demand: 10.00
+    -> Facility 44 | amount: 4.00 | fraction: 0.40 | unit cost: 6.00 | cost: 24.00
+    -> Facility 24 | amount: 6.00 | fraction: 0.60 | unit cost: 16.00 | cost: 96.00
+  Customer 84 | demand: 10.00
+    -> Facility 4 | amount: 10.00 | fraction: 1.00 | unit cost: 9.00 | cost: 90.00
+  Customer 85 | demand: 8.00
+    -> Facility 41 | amount: 8.00 | fraction: 1.00 | unit cost: 13.00 | cost: 104.00
+  Customer 86 | demand: 18.00
+    -> Facility 41 | amount: 18.00 | fraction: 1.00 | unit cost: 9.00 | cost: 162.00
+  Customer 87 | demand: 5.00
+    -> Facility 27 | amount: 5.00 | fraction: 1.00 | unit cost: 3.00 | cost: 15.00
+  Customer 88 | demand: 15.00
+    -> Facility 19 | amount: 15.00 | fraction: 1.00 | unit cost: 10.00 | cost: 150.00
+  Customer 89 | demand: 17.00
+    -> Facility 7 | amount: 17.00 | fraction: 1.00 | unit cost: 9.00 | cost: 153.00
+  Customer 90 | demand: 15.00
+    -> Facility 38 | amount: 1.00 | fraction: 0.07 | unit cost: 12.00 | cost: 12.00
+    -> Facility 4 | amount: 14.00 | fraction: 0.93 | unit cost: 16.00 | cost: 224.00
+  Customer 91 | demand: 19.00
+    -> Facility 33 | amount: 19.00 | fraction: 1.00 | unit cost: 8.00 | cost: 152.00
+  Customer 92 | demand: 17.00
+    -> Facility 48 | amount: 17.00 | fraction: 1.00 | unit cost: 11.00 | cost: 187.00
+  Customer 93 | demand: 6.00
+    -> Facility 27 | amount: 6.00 | fraction: 1.00 | unit cost: 7.00 | cost: 42.00
+  Customer 94 | demand: 20.00
+    -> Facility 48 | amount: 20.00 | fraction: 1.00 | unit cost: 4.00 | cost: 80.00
+  Customer 95 | demand: 12.00
+    -> Facility 29 | amount: 12.00 | fraction: 1.00 | unit cost: 11.00 | cost: 132.00
+  Customer 96 | demand: 15.00
+    -> Facility 29 | amount: 15.00 | fraction: 1.00 | unit cost: 8.00 | cost: 120.00
+  Customer 97 | demand: 10.00
+    -> Facility 45 | amount: 4.00 | fraction: 0.40 | unit cost: 9.00 | cost: 36.00
+    -> Facility 47 | amount: 6.00 | fraction: 0.60 | unit cost: 5.00 | cost: 30.00
+  Customer 98 | demand: 14.00
+    -> Facility 20 | amount: 14.00 | fraction: 1.00 | unit cost: 3.00 | cost: 42.00
+  Customer 99 | demand: 15.00
+    -> Facility 42 | amount: 15.00 | fraction: 1.00 | unit cost: 7.00 | cost: 105.00
+  Customer 100 | demand: 16.00
+    -> Facility 6 | amount: 16.00 | fraction: 1.00 | unit cost: 8.00 | cost: 128.00
+  Customer 101 | demand: 11.00
+    -> Facility 24 | amount: 11.00 | fraction: 1.00 | unit cost: 6.00 | cost: 66.00
+  Customer 102 | demand: 12.00
+    -> Facility 27 | amount: 12.00 | fraction: 1.00 | unit cost: 14.00 | cost: 168.00
+  Customer 103 | demand: 10.00
+    -> Facility 13 | amount: 10.00 | fraction: 1.00 | unit cost: 7.00 | cost: 70.00
+  Customer 104 | demand: 6.00
+    -> Facility 41 | amount: 6.00 | fraction: 1.00 | unit cost: 4.00 | cost: 24.00
+  Customer 105 | demand: 14.00
+    -> Facility 29 | amount: 14.00 | fraction: 1.00 | unit cost: 7.00 | cost: 98.00
+  Customer 106 | demand: 16.00
+    -> Facility 31 | amount: 16.00 | fraction: 1.00 | unit cost: 19.00 | cost: 304.00
+  Customer 107 | demand: 13.00
+    -> Facility 7 | amount: 13.00 | fraction: 1.00 | unit cost: 5.00 | cost: 65.00
+  Customer 108 | demand: 6.00
+    -> Facility 49 | amount: 6.00 | fraction: 1.00 | unit cost: 5.00 | cost: 30.00
+  Customer 109 | demand: 10.00
+    -> Facility 23 | amount: 10.00 | fraction: 1.00 | unit cost: 5.00 | cost: 50.00
+  Customer 110 | demand: 20.00
+    -> Facility 21 | amount: 20.00 | fraction: 1.00 | unit cost: 13.00 | cost: 260.00
+  Customer 111 | demand: 10.00
+    -> Facility 34 | amount: 10.00 | fraction: 1.00 | unit cost: 12.00 | cost: 120.00
+  Customer 112 | demand: 8.00
+    -> Facility 14 | amount: 8.00 | fraction: 1.00 | unit cost: 16.00 | cost: 128.00
+  Customer 113 | demand: 14.00
+    -> Facility 32 | amount: 14.00 | fraction: 1.00 | unit cost: 20.00 | cost: 280.00
+  Customer 114 | demand: 16.00
+    -> Facility 42 | amount: 16.00 | fraction: 1.00 | unit cost: 9.00 | cost: 144.00
+
